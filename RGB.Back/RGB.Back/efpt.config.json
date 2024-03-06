@@ -1,0 +1,150 @@
+﻿{
+   "CodeGenerationMode": 4,
+   "ContextClassName": "RizzContext",
+   "ContextNamespace": null,
+   "DefaultDacpacSchema": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": false,
+   "ModelNamespace": null,
+   "OutputContextPath": null,
+   "OutputPath": "Models",
+   "PreserveCasingWithRegex": true,
+   "ProjectRootNamespace": "RGB.Back",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 2,
+   "SelectedToBeGenerated": 0,
+   "T4TemplatePath": null,
+   "Tables": [
+      {
+         "Name": "[dbo].[Admins]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AttachedComment]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[BanGames]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[BanMembers]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[BillDetails]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[BillItems]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Boards]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[BonusItems]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[BonusProducts]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[BonusProductTypes]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Carts]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Collections]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Comments]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Developers]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[DiscountItem]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Discounts]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[DLCs]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Friends]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Games]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[GameTags]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Images]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Members]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[MemberTags]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Messages]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Pictures]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Tags]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[WishListes]",
+         "ObjectType": 0
+      }
+   ],
+   "UiHint": "sparkle\\sql2024.Rizz.dbo",
+   "UncountableWords": null,
+   "UseBoolPropertiesWithoutDefaultSql": false,
+   "UseDatabaseNames": false,
+   "UseDateOnlyTimeOnly": true,
+   "UseDbContextSplitting": false,
+   "UseDecimalDataAnnotationForSprocResult": true,
+   "UseFluentApiOnly": true,
+   "UseHandleBars": false,
+   "UseHierarchyId": false,
+   "UseInflector": true,
+   "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": false,
+   "UseNoDefaultConstructor": false,
+   "UseNoNavigations": false,
+   "UseNoObjectFilter": false,
+   "UseNodaTime": false,
+   "UseNullableReferences": false,
+   "UsePrefixNavigationNaming": false,
+   "UseSchemaFolders": false,
+   "UseSchemaNamespaces": false,
+   "UseSpatial": false,
+   "UseT4": false
+}

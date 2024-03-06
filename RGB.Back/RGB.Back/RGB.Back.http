@@ -1,0 +1,6 @@
+@RGB.Back_HostAddress = http://localhost:5214
+
+GET {{RGB.Back_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
