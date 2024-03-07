@@ -6,6 +6,7 @@ namespace RGB.Back.DTOs
 	public class GameDetailDTO
 	{
 		public int Id { get; set; }
+
 		public int DeveloperId { get; set; }
 
 		public string Name { get; set; }
@@ -29,5 +30,9 @@ namespace RGB.Back.DTOs
 		public List<Game> DLCs { get; set; }
 
 		public string Video { get; set; }
+
+		public List<Discount> Discounts { get; set; }
+
+		public double Rating { get; set; }
 	}
 }

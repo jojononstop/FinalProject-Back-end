@@ -41,9 +41,9 @@ public partial class Game
 
     public virtual ICollection<DiscountItem> DiscountItems { get; set; } = new List<DiscountItem>();
 
-    public virtual ICollection<Dlc> DlcAttachedGames { get; set; } = new List<Dlc>();
+    public virtual ICollection<Dlc> DlcDlcNavigations { get; set; } = new List<Dlc>();
 
-    public virtual ICollection<Dlc> DlcGames { get; set; } = new List<Dlc>();
+    public virtual ICollection<Dlc> DlcMainGames { get; set; } = new List<Dlc>();
 
     public virtual ICollection<GameTag> GameTags { get; set; } = new List<GameTag>();
 

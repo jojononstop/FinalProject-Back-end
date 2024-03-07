@@ -326,15 +326,15 @@ public partial class RizzContext : DbContext
         {
             entity.ToTable("DLCs");
 
-            entity.HasOne(d => d.AttachedGame).WithMany(p => p.DlcAttachedGames)
-                .HasForeignKey(d => d.AttachedGameId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_DLCs_Games1");
-
-            entity.HasOne(d => d.Game).WithMany(p => p.DlcGames)
-                .HasForeignKey(d => d.GameId)
+            entity.HasOne(d => d.DlcNavigation).WithMany(p => p.DlcDlcNavigations)
+                .HasForeignKey(d => d.DlcId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_DLCs_Games");
+
+            entity.HasOne(d => d.MainGame).WithMany(p => p.DlcMainGames)
+                .HasForeignKey(d => d.MainGameId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_DLCs_Games1");
         });
 
         modelBuilder.Entity<Friend>(entity =>

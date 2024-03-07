@@ -9,11 +9,11 @@ public partial class Dlc
 {
     public int Id { get; set; }
 
-    public int GameId { get; set; }
+    public int DlcId { get; set; }
 
-    public int AttachedGameId { get; set; }
+    public int MainGameId { get; set; }
 
-    public virtual Game AttachedGame { get; set; }
+    public virtual Game DlcNavigation { get; set; }
 
-    public virtual Game Game { get; set; }
+    public virtual Game MainGame { get; set; }
 }
