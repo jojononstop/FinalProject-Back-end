@@ -43,9 +43,9 @@ namespace RGB.Back.Service
 			return gameDto;
 		}
 
-		public GameDetailDTO GetGameDetailByDeveloperId(int developerId)
+		public List<GameDetailDTO> GetGameDetailByDeveloperId(int developerId)
 		{
-			return new GameDetailDTO();
+			return new List<GameDetailDTO>();
 		}
 
 		public List<Tag> GetTags(int? gameId)
@@ -108,12 +108,32 @@ namespace RGB.Back.Service
 				
 		}
 
-		public List<Comment> GetComments(int gameId)
-		{
-			return _context.Comments.AsNoTracking()
+		public List<CommentDTO> GetComments(int gameId)
+		{			
+			var comments = _context.Comments.AsNoTracking()
 					.Where(x => x.GameId == gameId)
+					.Select(x => new CommentDTO
+					{
+						Id = x.Id,
+						MemberId = x.MemberId,
+						GameId = x.GameId,
+						Rating = x.Rating,
+						Comment1 = x.Comment1,
+						Date = x.Date
+					})
 					.OrderByDescending(x => x.Id)
 					.ToList();
+
+			foreach (var comment in comments)
+			{
+				var attachedComments = _context.AttachedComments.AsNoTracking()
+					.Where(x => x.AttachedCommentId == comment.Id)
+					.ToList();
+
+				comment.AttachedComment = attachedComments;
+			}
+
+			return comments;
 		}
 
 		public double GetRating(int gameId)

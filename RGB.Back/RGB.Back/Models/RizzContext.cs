@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using RGB.Back.DTOs;
 
 namespace RGB.Back.Models;
 
@@ -515,4 +516,6 @@ public partial class RizzContext : DbContext
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
+public DbSet<RGB.Back.DTOs.GameDetailDTO> GameDetailDTO { get; set; } = default!;
 }
