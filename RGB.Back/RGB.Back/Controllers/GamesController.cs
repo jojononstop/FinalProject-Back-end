@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using RGB.Back.DTOs;
 using RGB.Back.Models;
+using RGB.Back.Service;
 
 namespace RGB.Back.Controllers
 {
@@ -14,32 +16,28 @@ namespace RGB.Back.Controllers
     public class GamesController : ControllerBase
     {
         private readonly RizzContext _context;
+        private readonly GameService _service;
 
         public GamesController(RizzContext context)
         {
             _context = context;
+            _service = new GameService(context);
         }
 
         // GET: api/Games
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Game>>> GetGames()
+        public async Task<IEnumerable<Game>> GetGames()
         {
-            return await _context.Games.ToListAsync();
+            return _context.Games;
         }
 
         // GET: api/Games/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Game>> GetGame(int id)
+        public async Task<GameDetailDTO> GetGame(int id)
         {
-            var game = await _context.Games.FindAsync(id);
-
-            if (game == null)
-            {
-                return NotFound();
-            }
-
+            var game = _service.GetGameDetailByGameId(id);
             return game;
-        }
+		}
 
         // PUT: api/Games/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

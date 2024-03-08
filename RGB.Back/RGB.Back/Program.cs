@@ -41,7 +41,7 @@ namespace RGB.Back
 				app.UseSwaggerUI();
 			}
 
-			app.UseCors();
+			app.UseCors(CorsPolicy);
 			app.UseHttpsRedirection();
 
 			app.UseAuthorization();

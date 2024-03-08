@@ -516,6 +516,4 @@ public partial class RizzContext : DbContext
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
-
-public DbSet<RGB.Back.DTOs.GameDetailDTO> GameDetailDTO { get; set; } = default!;
 }
