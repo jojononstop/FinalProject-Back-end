@@ -47,6 +47,14 @@ namespace RGB.Back.Controllers
 			return games;
 		}
 
+		// POST: api/Games/FilterByTags
+		[HttpPost("FilterByTags")]
+		public async Task<IEnumerable<GameDetailDTO>> FilterGamesByTags([FromBody] List<int> tagIds)
+		{
+			var games = _service.GetGameDetailByTags(tagIds);
+			return games;
+		}
+
 		// PUT: api/Games/5
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		//[HttpPut("{id}")]

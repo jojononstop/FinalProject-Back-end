@@ -25,11 +25,11 @@ namespace RGB.Back.Controllers
 		}
 
         // GET: api/Comments
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Comment>>> GetComments()
-        {
-            return await _context.Comments.ToListAsync();
-        }
+        //[HttpGet]
+        //public async Task<IEnumerable<Comment>> GetComments()
+        //{
+        //    return await _context.Comments.ToListAsync();
+        //}
 
         // GET: api/Comments/5
         [HttpGet("{id}")]

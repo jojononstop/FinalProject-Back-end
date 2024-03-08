@@ -17,40 +17,24 @@ namespace RGB.Back.Service
 		{
 			var games = _context.Games.AsNoTracking().ToList();
 
-			var gameList = new List<GameDetailDTO>();
-
-			foreach (var game in games)
-			{
-				var gameDto = new GameDetailDTO();
-
-				var tags = GetTags(game.Id);
-				var discounts = GetDiscounts(game.Id);
-				var DLCs = GetDLCs(game.Id);
-				var images = GetImages(game.Id);
-				var ratings = GetRating(game.Id);
-
-				gameDto.Id = game.Id;
-				gameDto.Name = game.Name;
-				gameDto.Introduction = game.Introduction;
-				gameDto.Price = game.Price;
-				gameDto.ReleaseDate = new DateTime(game.ReleaseDate.Year, game.ReleaseDate.Month, game.ReleaseDate.Day);
-				gameDto.Cover = game.Cover;
-				gameDto.MaxPercent = game.MaxPercent;
-				gameDto.Description = game.Description;
-				gameDto.DeveloperId = game.DeveloperId;
-				gameDto.Video = game.Video;
-				gameDto.Tags = tags;
-				gameDto.Discounts = discounts;
-				gameDto.DLCs = DLCs;
-				gameDto.DisplayImages = images;
-				gameDto.Rating = ratings;
-
-				gameList.Add(gameDto);
-			}
-
-			return gameList;
+			return GameToGameDetailDTO(games);
 		}
 
+		public List<GameDetailDTO> GetGameDetailByTags(List<int> tagIds)
+		{
+			var games = _context.Games.AsNoTracking().ToList();
+
+			foreach (int tagId in tagIds)
+			{
+				games = games.Join(_context.GameTags.Where(x => x.TagId == tagId),
+								   g => g.Id,
+								   gt => gt.GameId,
+								   (g, gt) => g)
+							   .ToList();
+			}
+
+			return GameToGameDetailDTO(games);
+		}
 
 		public GameDetailDTO GetGameDetailByGameId(int gameId)
 		{
@@ -87,41 +71,11 @@ namespace RGB.Back.Service
 
 		public List<GameDetailDTO> GetGameDetailByDeveloperId(int developerId)
 		{
-			var gameList = new List<GameDetailDTO>();
-
 			var games = _context.Games.AsNoTracking()
 				.Where(x => x.DeveloperId == developerId)
 				.ToList();
-
-			foreach (var game in games)
-			{
-				var gameDto = new GameDetailDTO();
-				var tags = GetTags(game.Id);
-				var discounts = GetDiscounts(game.Id);
-				var DLCs = GetDLCs(game.Id);
-				var images = GetImages(game.Id);
-				var ratings = GetRating(game.Id);
-
-				gameDto.Id = game.Id;
-				gameDto.Name = game.Name;
-				gameDto.Introduction = game.Introduction;
-				gameDto.Price = game.Price;
-				gameDto.ReleaseDate = new DateTime(game.ReleaseDate.Year, game.ReleaseDate.Month, game.ReleaseDate.Day);
-				gameDto.Cover = game.Cover;
-				gameDto.MaxPercent = game.MaxPercent;
-				gameDto.Description = game.Description;
-				gameDto.DeveloperId = game.DeveloperId;
-				gameDto.Video = game.Video;
-				gameDto.Tags = tags;
-				gameDto.Discounts = discounts;
-				gameDto.DLCs = DLCs;
-				gameDto.DisplayImages = images;
-				gameDto.Rating = ratings;
-
-				gameList.Add(gameDto);
-			}
-
-			return gameList;
+	
+			return GameToGameDetailDTO(games);
 		}
 
 		public List<Tag> GetTags(int? gameId)
@@ -251,18 +205,49 @@ namespace RGB.Back.Service
 
 			var rating = 0;
 
-			if (comments.Count == 0) 
-			{ 
+			if (comments.Count == 0) { 
 				return 0; 
-			}
-			else
-			{
-
+			}else{
 				foreach (var comment in comments)
 				{ rating += comment.Rating; }
 
 				return (double)rating / comments.Count;
 			}
+		}
+
+		public List<GameDetailDTO> GameToGameDetailDTO(List<Game> games)
+		{
+			var gameList = new List<GameDetailDTO>();
+
+			foreach (var game in games)
+			{
+				var gameDto = new GameDetailDTO();
+				var tags = GetTags(game.Id);
+				var discounts = GetDiscounts(game.Id);
+				var DLCs = GetDLCs(game.Id);
+				var images = GetImages(game.Id);
+				var ratings = GetRating(game.Id);
+
+				gameDto.Id = game.Id;
+				gameDto.Name = game.Name;
+				gameDto.Introduction = game.Introduction;
+				gameDto.Price = game.Price;
+				gameDto.ReleaseDate = new DateTime(game.ReleaseDate.Year, game.ReleaseDate.Month, game.ReleaseDate.Day);
+				gameDto.Cover = game.Cover;
+				gameDto.MaxPercent = game.MaxPercent;
+				gameDto.Description = game.Description;
+				gameDto.DeveloperId = game.DeveloperId;
+				gameDto.Video = game.Video;
+				gameDto.Tags = tags;
+				gameDto.Discounts = discounts;
+				gameDto.DLCs = DLCs;
+				gameDto.DisplayImages = images;
+				gameDto.Rating = ratings;
+
+				gameList.Add(gameDto);
+			}
+
+			return gameList;
 		}
 	}
 

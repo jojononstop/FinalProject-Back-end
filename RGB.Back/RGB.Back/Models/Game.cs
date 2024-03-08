@@ -31,7 +31,7 @@ public partial class Game
 
     public virtual ICollection<BillItem> BillItems { get; set; } = new List<BillItem>();
 
-    public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
+    public virtual CartItem CartItem { get; set; }
 
     public virtual ICollection<Collection> Collections { get; set; } = new List<Collection>();
 
@@ -48,8 +48,6 @@ public partial class Game
     public virtual ICollection<GameTag> GameTags { get; set; } = new List<GameTag>();
 
     public virtual ICollection<Image> Images { get; set; } = new List<Image>();
-
-    public virtual ICollection<MemberTag> MemberTags { get; set; } = new List<MemberTag>();
 
     public virtual ICollection<WishListe> WishListes { get; set; } = new List<WishListe>();
 }

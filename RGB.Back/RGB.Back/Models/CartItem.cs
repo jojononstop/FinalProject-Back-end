@@ -5,23 +5,21 @@ using System.Collections.Generic;
 
 namespace RGB.Back.Models;
 
-public partial class BillItem
+public partial class CartItem
 {
     public int Id { get; set; }
 
-    public int BillDetailId { get; set; }
-
     public int GameId { get; set; }
 
-    public decimal Quantity { get; set; }
+    public int CartId { get; set; }
 
-    public decimal Total { get; set; }
+    public decimal Quantity { get; set; }
 
     public DateTime CreateAt { get; set; }
 
     public DateTime UpdateAt { get; set; }
 
-    public virtual BillDetail BillDetail { get; set; }
+    public virtual Game Id1 { get; set; }
 
-    public virtual Game Game { get; set; }
+    public virtual Cart IdNavigation { get; set; }
 }
