@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using RGB.Back.DTOs;
 using RGB.Back.Models;
+using RGB.Back.Service;
 
 namespace RGB.Back.Controllers
 {
@@ -14,11 +16,13 @@ namespace RGB.Back.Controllers
     public class CommentsController : ControllerBase
     {
         private readonly RizzContext _context;
+		private readonly GameService _service;
 
-        public CommentsController(RizzContext context)
+		public CommentsController(RizzContext context)
         {
             _context = context;
-        }
+			_service = new GameService(context);
+		}
 
         // GET: api/Comments
         [HttpGet]
@@ -29,17 +33,10 @@ namespace RGB.Back.Controllers
 
         // GET: api/Comments/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Comment>> GetComment(int id)
+        public async Task<IEnumerable<CommentDTO>> GetComment(int id)
         {
-            var comment = await _context.Comments.FindAsync(id);
-
-            if (comment == null)
-            {
-                return NotFound();
-            }
-
-            return comment;
-        }
+            return _service.GetComments(id);
+		}
 
         // PUT: api/Comments/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

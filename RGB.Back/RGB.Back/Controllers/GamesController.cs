@@ -26,10 +26,10 @@ namespace RGB.Back.Controllers
 
         // GET: api/Games
         [HttpGet]
-        public async Task<IEnumerable<Game>> GetGames()
+        public async Task<IEnumerable<GameDetailDTO>> GetGames()
         {
-            return _context.Games;
-        }
+            return _service.GetAllGameDetail();
+		}
 
         // GET: api/Games/5
         [HttpGet("{id}")]
@@ -39,67 +39,75 @@ namespace RGB.Back.Controllers
             return game;
 		}
 
-        // PUT: api/Games/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutGame(int id, Game game)
-        {
-            if (id != game.Id)
-            {
-                return BadRequest();
-            }
+		// GET: api/Games/developer/5
+		[HttpGet("developer/{developerId}")]
+		public async Task<IEnumerable<GameDetailDTO>> GetGamesByDeveloperId(int developerId)
+		{
+			var games = _service.GetGameDetailByDeveloperId(developerId);
+			return games;
+		}
 
-            _context.Entry(game).State = EntityState.Modified;
+		// PUT: api/Games/5
+		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+		//[HttpPut("{id}")]
+		//public async Task<IActionResult> PutGame(int id, Game game)
+		//{
+		//    if (id != game.Id)
+		//    {
+		//        return BadRequest();
+		//    }
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!GameExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+		//    _context.Entry(game).State = EntityState.Modified;
 
-            return NoContent();
-        }
+		//    try
+		//    {
+		//        await _context.SaveChangesAsync();
+		//    }
+		//    catch (DbUpdateConcurrencyException)
+		//    {
+		//        if (!GameExists(id))
+		//        {
+		//            return NotFound();
+		//        }
+		//        else
+		//        {
+		//            throw;
+		//        }
+		//    }
 
-        // POST: api/Games
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Game>> PostGame(Game game)
-        {
-            _context.Games.Add(game);
-            await _context.SaveChangesAsync();
+		//    return NoContent();
+		//}
 
-            return CreatedAtAction("GetGame", new { id = game.Id }, game);
-        }
+		//// POST: api/Games
+		//// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+		//[HttpPost]
+		//public async Task<ActionResult<Game>> PostGame(Game game)
+		//{
+		//    _context.Games.Add(game);
+		//    await _context.SaveChangesAsync();
 
-        // DELETE: api/Games/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteGame(int id)
-        {
-            var game = await _context.Games.FindAsync(id);
-            if (game == null)
-            {
-                return NotFound();
-            }
+		//    return CreatedAtAction("GetGame", new { id = game.Id }, game);
+		//}
 
-            _context.Games.Remove(game);
-            await _context.SaveChangesAsync();
+		//// DELETE: api/Games/5
+		//[HttpDelete("{id}")]
+		//public async Task<IActionResult> DeleteGame(int id)
+		//{
+		//    var game = await _context.Games.FindAsync(id);
+		//    if (game == null)
+		//    {
+		//        return NotFound();
+		//    }
 
-            return NoContent();
-        }
+		//    _context.Games.Remove(game);
+		//    await _context.SaveChangesAsync();
 
-        private bool GameExists(int id)
-        {
-            return _context.Games.Any(e => e.Id == id);
-        }
-    }
+		//    return NoContent();
+		//}
+
+		//private bool GameExists(int id)
+		//{
+		//    return _context.Games.Any(e => e.Id == id);
+		//}
+	}
 }

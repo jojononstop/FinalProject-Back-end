@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using RGB.Back.DTOs;
 
 namespace RGB.Back.Models;
 
@@ -85,6 +84,17 @@ public partial class RizzContext : DbContext
             entity.ToTable("AttachedComment");
 
             entity.Property(e => e.Comment).IsRequired();
+            entity.Property(e => e.DateTime).HasColumnType("datetime");
+
+            entity.HasOne(d => d.MainComment).WithMany(p => p.AttachedComments)
+                .HasForeignKey(d => d.MainCommentId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_AttachedComment_Comments");
+
+            entity.HasOne(d => d.Member).WithMany(p => p.AttachedComments)
+                .HasForeignKey(d => d.MemberId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_AttachedComment_Members");
         });
 
         modelBuilder.Entity<BanGame>(entity =>
@@ -366,7 +376,7 @@ public partial class RizzContext : DbContext
                 .HasMaxLength(1000);
             entity.Property(e => e.Introduction)
                 .IsRequired()
-                .HasMaxLength(50);
+                .HasMaxLength(200);
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(50);

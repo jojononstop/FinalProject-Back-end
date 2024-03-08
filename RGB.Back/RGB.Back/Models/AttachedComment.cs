@@ -9,7 +9,15 @@ public partial class AttachedComment
 {
     public int Id { get; set; }
 
-    public int AttachedCommentId { get; set; }
+    public int MainCommentId { get; set; }
 
     public string Comment { get; set; }
+
+    public int MemberId { get; set; }
+
+    public DateTime DateTime { get; set; }
+
+    public virtual Comment MainComment { get; set; }
+
+    public virtual Member Member { get; set; }
 }
