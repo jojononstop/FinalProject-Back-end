@@ -31,7 +31,19 @@ namespace RGB.Back.Service
 
 			return memberDto;
 		}
+		public List<MemberTagDTO> GetMemberTagByMemberId(int memberId)
+		{
+			var memberTagList = _context.MemberTags.AsNoTracking()
+				.Where(mt => mt.MemberId == memberId)
+				.Select(mt => new MemberTagDTO
+				{
+					Id = mt.Id,
+					Name = mt.Name,
+				})
+				.Distinct()
+				.ToList();
 
-
+			return memberTagList;
+		}
 	}
 }

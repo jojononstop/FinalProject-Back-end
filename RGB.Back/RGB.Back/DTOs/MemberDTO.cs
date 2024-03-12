@@ -10,7 +10,7 @@
 
 		public string Mail { get; set; }
 
-		public string AvatarUrl { get; set; }
+		public string? AvatarUrl { get; set; }
 
 		public DateTime RegistrationDate { get; set; }
 
