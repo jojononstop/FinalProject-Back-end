@@ -168,6 +168,51 @@ namespace RGB.Back.Service
 
 		}
 
+		public List<GameDetailDTO> GetDiscountedGames(int? discountId)
+		{
+			if (discountId != null)
+			{
+				var discountItems = _context.DiscountItems.AsNoTracking()
+					.Where(x => x.DiscountId == discountId)
+					.ToList();
+
+				var discountGameList = new List<Game>();
+				foreach (var item in discountItems)
+				{
+					var game = _context.Games
+						.Where(x => x.Id == item.GameId)
+						.FirstOrDefault();
+
+					discountGameList.Add(game);
+				}
+				var games = GameToGameDetailDTO(discountGameList);
+				return games;
+			}
+			else
+			{
+				var today = DateOnly.FromDateTime(DateTime.Now);
+				var discountItems = _context.Discounts.AsNoTracking()
+					.Where(x => x.StartDate <= today && x.EndDate >= today)
+					.Join(_context.DiscountItems,
+					x => x.Id,
+					y => y.DiscountId,
+					(x, y) => y)
+					.ToList();
+
+				var discountGameList = new List<Game>();
+				foreach (var item in discountItems)
+				{
+					var game = _context.Games
+						.Where(x => x.Id == item.GameId)
+						.FirstOrDefault();
+
+					discountGameList.Add(game);
+				}
+				var games = GameToGameDetailDTO(discountGameList);
+				return games;
+			}
+		}
+
 		public List<CommentDTO> GetComments(int gameId)
 		{
 			var comments = _context.Comments.AsNoTracking()

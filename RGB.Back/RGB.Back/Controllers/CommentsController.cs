@@ -41,13 +41,8 @@ namespace RGB.Back.Controllers
         // PUT: api/Comments/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutComment(int id, Comment comment)
-        {
-            if (id != comment.Id)
-            {
-                return BadRequest();
-            }
-
+        public async Task<string> PutComment(int id, Comment comment)
+        {         
             _context.Entry(comment).State = EntityState.Modified;
 
             try
@@ -58,7 +53,7 @@ namespace RGB.Back.Controllers
             {
                 if (!CommentExists(id))
                 {
-                    return NotFound();
+                    return "修改失敗";
                 }
                 else
                 {
@@ -66,34 +61,34 @@ namespace RGB.Back.Controllers
                 }
             }
 
-            return NoContent();
+            return "修改成功";
         }
 
         // POST: api/Comments
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Comment>> PostComment(Comment comment)
+        public async Task<Comment> PostComment(Comment comment)
         {
             _context.Comments.Add(comment);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetComment", new { id = comment.Id }, comment);
+            return comment;
         }
 
         // DELETE: api/Comments/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteComment(int id)
+        public async Task<string> DeleteComment(int id)
         {
             var comment = await _context.Comments.FindAsync(id);
             if (comment == null)
             {
-                return NotFound();
+                return "刪除失敗";
             }
 
             _context.Comments.Remove(comment);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return "刪除成功";
         }
 
         private bool CommentExists(int id)
