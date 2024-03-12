@@ -31,9 +31,13 @@ namespace RGB.Back.Service
 			return collectionList;
 		}
 
-		public void EditCollection(int collectionId)
+		public void UpdateCollectionTags(CollectionDTO dto)
 		{
+			Collection model = _context.Collections.Find(dto.Id);
 
+			model.MemberTagId = dto.MemberTagId;
+
+			_context.SaveChanges();
 		}
 	}
 }
