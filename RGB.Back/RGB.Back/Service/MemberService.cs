@@ -49,30 +49,31 @@ namespace RGB.Back.Service
 			return memberTagList;
 		}
 
-		public void ValidLogin(MemberDTO loginDto)
+		public bool ValidLogin(LoginDTO loginDto)
 		{
 
-		//	// 根據account(帳號)取得 Member
-		//	var member = _context.Members.FirstOrDefault(p => p.Account == loginDto.Account);
-		//	if (member == null)
-		//	{
-		//		throw new Exception("帳號或密碼有誤");// 原則上, 不要告知細節
-		//	}
+			// 根據account(帳號)取得 Member
+			var member = _context.Members.FirstOrDefault(p => p.Account == loginDto.Account);
+			if (member == null)
+			{
+				return false;// 原則上, 不要告知細節
+			}
 
-		//	// 檢查是否已經確認
-		//	if (member.IsConfirmed == false)
-		//	{
-		//		throw new Exception("您尚未開通會員資格, 請先收確認信, 並點選信裡的連結, 完成認證, 才能登入本網站");
-		//	}
+			//// 檢查是否已經確認
+			//if (member.IsConfirmed == false)
+			//{
+			//	throw new Exception("您尚未開通會員資格, 請先收確認信, 並點選信裡的連結, 完成認證, 才能登入本網站");
+			//}
 
-		//	// 將vm裡的密碼先雜湊之後,再與db裡的密碼比對
-		//	var salt = HashUtility.GetSalt();
-		//	var hashedPassword = HashUtility.ToSHA256(loginDto.Password, salt);
+			//// 將vm裡的密碼先雜湊之後,再與db裡的密碼比對
+			//var salt = HashUtility.GetSalt();
+			//var hashedPassword = HashUtility.ToSHA256(loginDto.Password, salt);
 
-		//	if (string.Compare(member.Password, hashedPassword, true) != 0)
-		//	{
-		//		throw new Exception("帳號或密碼有誤");
-		//	}
+			if (string.Compare(member.Password, loginDto.Password, true) != 0)
+			{
+				return false;
+			}
+			return true;
 		}
 	}
 }

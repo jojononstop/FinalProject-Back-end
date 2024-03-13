@@ -11,9 +11,11 @@ using RGB.Back.DTOs;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using NuGet.Common;
 using RGB.Back.Service;
+using Microsoft.AspNetCore.Cors;
 
 namespace RGB.Back.Controllers
 {
+    [EnableCors("AllowAny")]
     [Route("api/[controller]")]
     [ApiController]
     public class MembersController : ControllerBase
@@ -27,48 +29,40 @@ namespace RGB.Back.Controllers
 			_service = new MemberService(context);
 		}
 
-		// GET: api/Members
-		//[HttpGet]
-		//public async Task<ActionResult<IEnumerable<Member>>> GetMembers()
-		//{
-		//    return await _context.Members.ToListAsync();
-		//}
+        // GET: api/Members
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<Member>>> GetMembers()
+        //{
+        //    return await _context.Members.ToListAsync();
+        //}
 
-		//// GET: api/Members/5
-		//[HttpGet("{id}")]
-		//public async Task<Member> GetMember(int id)
-		//{
-		//    var member = await _context.Members.FindAsync(id);
+        //// GET: api/Members/5
+        //[HttpGet("{id}")]
+        //public async Task<Member> GetMember(int id)
+        //{
+        //    var member = await _context.Members.FindAsync(id);
 
-		//    //if (member == null)
-		//    //{
-		//    //    return NotFound();
-		//    //}
+        //    //if (member == null)
+        //    //{
+        //    //    return NotFound();
+        //    //}
 
-		//    return member;
-		//}
+        //    return member;
+        //}
 
-		[HttpPost("1")]
-		public String Login(LoginDTO loginDto)
+        [HttpPost("Login")]
+        //LoginDTO loginDto
+        public async Task<string> Login(LoginDTO loginDto)
 		{
-			//if (!ModelState.IsValid) // 如果欄位驗證失敗, 就回到 login page
-			//{
-			//	return View(vm);
-			//}
-
-			//try
-			//{
-			//	_service.ValidLogin(loginDto); // 驗證帳密是否ok,且是有效的會員
-			//}
-			//catch (Exception ex)
-			//{
-			//	//ModelState.AddModelError("", ex.Message);
-			//	return "登入失敗";
-			//}
-
-			ProcessLogin(loginDto); // 將帳號資訊加入cookie
-
-			return "登入成功"; // 轉向到它原本應該要去的網址
+            var result= _service.ValidLogin(loginDto); // 驗證帳密是否ok,且是有效的會員
+            if (result == false)
+            {
+                return "帳號或密碼錯誤";
+            }
+            else 
+            {
+				return "登入成功";
+			}
 		}
 
 		[HttpPost("2")]
@@ -158,16 +152,16 @@ namespace RGB.Back.Controllers
             return _context.Members.Any(e => e.Id == id);
         }
 
-        //將使用者資訊存入cookie
-		private void ProcessLogin(LoginDTO LoginDto)
-		{
-			CookieOptions options = new CookieOptions();
-			// 设置过期时间
-			options.Expires = DateTime.Now.AddHours(1);
-			HttpContext.Response.Cookies.Append("Account", LoginDto.Account, options);
-		}
+		//      //將使用者資訊存入cookie
+		//private void ProcessLogin(LoginDTO LoginDto)
+		//{
+		//	CookieOptions options = new CookieOptions();
+		//	// 设置过期时间
+		//	options.Expires = DateTime.Now.AddHours(1);
+		//	HttpContext.Response.Cookies.Append("Account", LoginDto.Account, options);
+		//}
 
-        //刪除cookie
+		//刪除cookie
 		private void DeleteCookie()
 		{
 			HttpContext.Response.Cookies.Delete("Account");
