@@ -11,13 +11,9 @@ public partial class MemberTag
 
     public int MemberId { get; set; }
 
-    public int GameId { get; set; }
-
     public string Name { get; set; }
 
     public virtual ICollection<Collection> Collections { get; set; } = new List<Collection>();
-
-    public virtual Game Game { get; set; }
 
     public virtual Member Member { get; set; }
 }

@@ -29,6 +29,12 @@ public partial class Member
 
     public string NickName { get; set; }
 
+    public bool? IsConfirmed { get; set; }
+
+    public string ConfirmCode { get; set; }
+
+    public virtual ICollection<AttachedComment> AttachedComments { get; set; } = new List<AttachedComment>();
+
     public virtual ICollection<BanGame> BanGames { get; set; } = new List<BanGame>();
 
     public virtual ICollection<BanMember> BanMemberMember1s { get; set; } = new List<BanMember>();

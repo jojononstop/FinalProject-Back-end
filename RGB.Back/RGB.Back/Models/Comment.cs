@@ -19,6 +19,8 @@ public partial class Comment
 
     public DateTime? Date { get; set; }
 
+    public virtual ICollection<AttachedComment> AttachedComments { get; set; } = new List<AttachedComment>();
+
     public virtual Game Game { get; set; }
 
     public virtual Member Member { get; set; }

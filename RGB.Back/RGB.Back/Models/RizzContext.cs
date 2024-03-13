@@ -84,6 +84,17 @@ public partial class RizzContext : DbContext
             entity.ToTable("AttachedComment");
 
             entity.Property(e => e.Comment).IsRequired();
+            entity.Property(e => e.DateTime).HasColumnType("datetime");
+
+            entity.HasOne(d => d.MainComment).WithMany(p => p.AttachedComments)
+                .HasForeignKey(d => d.MainCommentId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_AttachedComment_Comments");
+
+            entity.HasOne(d => d.Member).WithMany(p => p.AttachedComments)
+                .HasForeignKey(d => d.MemberId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_AttachedComment_Members");
         });
 
         modelBuilder.Entity<BanGame>(entity =>
@@ -176,17 +187,15 @@ public partial class RizzContext : DbContext
 
         modelBuilder.Entity<BonusItem>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK_Items");
+            entity.HasOne(d => d.Bonus).WithMany(p => p.BonusItems)
+                .HasForeignKey(d => d.BonusId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_BonusItems_BonusProducts");
 
             entity.HasOne(d => d.Member).WithMany(p => p.BonusItems)
                 .HasForeignKey(d => d.MemberId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Items_Members");
-
-            entity.HasOne(d => d.Product).WithMany(p => p.BonusItems)
-                .HasForeignKey(d => d.ProductId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_BonusItems_BonusProducts");
+                .HasConstraintName("FK_BonusItems_Members");
         });
 
         modelBuilder.Entity<BonusProduct>(entity =>
@@ -365,7 +374,7 @@ public partial class RizzContext : DbContext
                 .HasMaxLength(1000);
             entity.Property(e => e.Introduction)
                 .IsRequired()
-                .HasMaxLength(50);
+                .HasMaxLength(200);
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(50);
@@ -414,6 +423,7 @@ public partial class RizzContext : DbContext
                 .HasColumnName("AvatarURL");
             entity.Property(e => e.BanTime).HasColumnType("datetime");
             entity.Property(e => e.Birthday).HasColumnType("datetime");
+            entity.Property(e => e.ConfirmCode).HasMaxLength(256);
             entity.Property(e => e.LastLoginDate).HasColumnType("datetime");
             entity.Property(e => e.Mail)
                 .IsRequired()
@@ -431,11 +441,6 @@ public partial class RizzContext : DbContext
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(50);
-
-            entity.HasOne(d => d.Game).WithMany(p => p.MemberTags)
-                .HasForeignKey(d => d.GameId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_MemberTags_Games");
 
             entity.HasOne(d => d.Member).WithMany(p => p.MemberTags)
                 .HasForeignKey(d => d.MemberId)

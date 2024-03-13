@@ -11,9 +11,9 @@ public partial class BonusItem
 
     public int MemberId { get; set; }
 
-    public int ProductId { get; set; }
+    public int BonusId { get; set; }
+
+    public virtual BonusProduct Bonus { get; set; }
 
     public virtual Member Member { get; set; }
-
-    public virtual BonusProduct Product { get; set; }
 }
