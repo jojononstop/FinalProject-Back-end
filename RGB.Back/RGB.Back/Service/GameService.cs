@@ -49,6 +49,7 @@ namespace RGB.Back.Service
 			var DLCs = GetDLCs(gameId);
 			var images = GetImages(gameId);
 			var ratings = GetRating(gameId);
+			var discointData = GetDiscountData(game,discounts);
 
 			gameDto.Id = game.Id;
 			gameDto.Name = game.Name;
@@ -56,7 +57,7 @@ namespace RGB.Back.Service
 			gameDto.Price = game.Price;
 			gameDto.ReleaseDate = new DateTime(game.ReleaseDate.Year, game.ReleaseDate.Month, game.ReleaseDate.Day);
 			gameDto.Cover = game.Cover;
-			gameDto.MaxPercent = game.MaxPercent;
+			//gameDto.MaxPercent = game.MaxPercent;
 			gameDto.Description = game.Description;
 			gameDto.DeveloperId = game.DeveloperId;
 			gameDto.Video = game.Video;
@@ -65,6 +66,8 @@ namespace RGB.Back.Service
 			gameDto.DLCs = DLCs;
 			gameDto.DisplayImages = images;
 			gameDto.Rating = ratings;
+			gameDto.DiscountPercent =discointData.discountPercent;
+			gameDto.DiscountPrice =discointData.discountPrice;
 
 			return gameDto;
 		}
@@ -115,6 +118,7 @@ namespace RGB.Back.Service
 				var discounts = GetDiscounts(dlc.Id);
 				var images = GetImages(dlc.Id);
 				var ratings = GetRating(dlc.Id);
+				var discointData = GetDiscountData(dlc, discounts);
 
 				dlcDto.Id = dlc.Id;
 				dlcDto.Name = dlc.Name;
@@ -122,7 +126,7 @@ namespace RGB.Back.Service
 				dlcDto.Price = dlc.Price;
 				dlcDto.ReleaseDate = new DateTime(dlc.ReleaseDate.Year, dlc.ReleaseDate.Month, dlc.ReleaseDate.Day);
 				dlcDto.Cover = dlc.Cover;
-				dlcDto.MaxPercent = dlc.MaxPercent;
+				//dlcDto.MaxPercent = dlc.MaxPercent;
 				dlcDto.Description = dlc.Description;
 				dlcDto.DeveloperId = dlc.DeveloperId;
 				dlcDto.Video = dlc.Video;
@@ -130,6 +134,8 @@ namespace RGB.Back.Service
 				dlcDto.Discounts = discounts;
 				dlcDto.DisplayImages = images;
 				dlcDto.Rating = ratings;
+				dlcDto.DiscountPercent = discointData.discountPercent;
+				dlcDto.DiscountPrice = discointData.discountPrice;
 
 				dlcList.Add(dlcDto);
 			}
@@ -166,6 +172,31 @@ namespace RGB.Back.Service
 					.ToList();
 			}
 
+		}
+
+		public (int discountPrice, int discountPercent) GetDiscountData(Game game, List<Discount> discounts)
+		{
+			if (discounts.Count != 0)
+			{
+				double totalDiscountPercent = 1;
+
+				foreach (var item in discounts)
+				{
+					totalDiscountPercent *= item.Percent / 100.0;
+				}
+
+				if (totalDiscountPercent < game.MaxPercent / 100.0)
+				{
+					totalDiscountPercent = (double)game.MaxPercent / 100.0;
+				}
+
+				double dPrice = game.Price * totalDiscountPercent;
+				return ((int)dPrice, (int)(totalDiscountPercent * 100.0));
+			}
+			else
+			{
+				return (0, 0);
+			}
 		}
 
 		public List<GameDetailDTO> GetDiscountedGames(int? discountId)
@@ -256,7 +287,8 @@ namespace RGB.Back.Service
 				foreach (var comment in comments)
 				{ rating += comment.Rating; }
 
-				return (double)rating / comments.Count;
+				double averageRating = (double)rating / comments.Count;
+				return Math.Round(averageRating, 1);
 			}
 		}
 
@@ -272,6 +304,7 @@ namespace RGB.Back.Service
 				var DLCs = GetDLCs(game.Id);
 				var images = GetImages(game.Id);
 				var ratings = GetRating(game.Id);
+				var discointData = GetDiscountData(game, discounts);
 
 				gameDto.Id = game.Id;
 				gameDto.Name = game.Name;
@@ -279,7 +312,7 @@ namespace RGB.Back.Service
 				gameDto.Price = game.Price;
 				gameDto.ReleaseDate = new DateTime(game.ReleaseDate.Year, game.ReleaseDate.Month, game.ReleaseDate.Day);
 				gameDto.Cover = game.Cover;
-				gameDto.MaxPercent = game.MaxPercent;
+				//gameDto.MaxPercent = game.MaxPercent;
 				gameDto.Description = game.Description;
 				gameDto.DeveloperId = game.DeveloperId;
 				gameDto.Video = game.Video;
@@ -288,6 +321,8 @@ namespace RGB.Back.Service
 				gameDto.DLCs = DLCs;
 				gameDto.DisplayImages = images;
 				gameDto.Rating = ratings;
+				gameDto.DiscountPercent = discointData.discountPercent;
+				gameDto.DiscountPrice = discointData.discountPrice;
 
 				gameList.Add(gameDto);
 			}

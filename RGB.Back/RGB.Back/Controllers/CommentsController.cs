@@ -91,7 +91,51 @@ namespace RGB.Back.Controllers
             return "刪除成功";
         }
 
-        private bool CommentExists(int id)
+		// PUT: api/AttachedComments/5
+		[HttpPut("attachedComment/{attachedCommentId}")]
+		public async Task<string> PutAttachedComment (int attachedCommentId, AttachedComment attachedComment)
+        {
+			_context.Entry(attachedComment).State = EntityState.Modified;
+
+			try
+			{
+				await _context.SaveChangesAsync();
+			}
+			catch (DbUpdateConcurrencyException)
+			{
+				return "修改失敗";
+			}
+
+			return "修改成功";
+		}
+
+        // POST: api/AttachedComments
+        [HttpPost("attachedComment")]
+        public async Task<AttachedComment> PostAttachedComment(AttachedComment attachedComment)
+        {
+			_context.AttachedComments.Add(attachedComment);
+			await _context.SaveChangesAsync();
+
+			return attachedComment;
+		}
+
+		// DELETE: api/AttachedComments
+		[HttpDelete("attachedComment/{attachedCommentId}")]
+		public async Task<string> DeleteAttachedComment(int attachedCommentId)
+		{
+			var attachedComment = await _context.AttachedComments.FindAsync(attachedCommentId);
+			if (attachedComment == null)
+			{
+				return "刪除失敗";
+			}
+
+			_context.AttachedComments.Remove(attachedComment);
+			await _context.SaveChangesAsync();
+
+			return "刪除成功";
+		}
+
+		private bool CommentExists(int id)
         {
             return _context.Comments.Any(e => e.Id == id);
         }
