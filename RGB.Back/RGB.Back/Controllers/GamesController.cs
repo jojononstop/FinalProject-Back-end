@@ -55,6 +55,14 @@ namespace RGB.Back.Controllers
 			return games;
 		}
 
+		// GET: api/Games/developer/5
+		[HttpGet("discount/{discountId}")]
+		public async Task<IEnumerable<GameDetailDTO>> GetGamesByDiscount(int discountId)
+		{
+			var games = _service.GetDiscountedGames(discountId);
+			return games;
+		}
+
 		// PUT: api/Games/5
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		//[HttpPut("{id}")]
