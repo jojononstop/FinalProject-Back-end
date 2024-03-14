@@ -112,6 +112,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[Payment]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[Pictures]",
          "ObjectType": 0
       },

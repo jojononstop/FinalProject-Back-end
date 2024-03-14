@@ -23,7 +23,7 @@ namespace RGB.Back.Service
 					Id = c.Id,
 					GameId = c.GameId,
 					MemberTagId =c.MemberTagId,
-					DateOfPurchase = c.BillDetail.TransactionDate
+					DateOfPurchase = c.BillDetail.CreateAt
 				})
 				.Distinct()
 				.ToList();

@@ -12,6 +12,11 @@ using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pag
 using NuGet.Common;
 using RGB.Back.Service;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.Extensions.DependencyInjection;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
+
 
 namespace RGB.Back.Controllers
 {
@@ -22,11 +27,22 @@ namespace RGB.Back.Controllers
     {
         private readonly RizzContext _context;
 		private readonly MemberService _service;
+		private readonly IDataProtector _dataProtector;
 
 		public MembersController(RizzContext context)
         {
             _context = context;
 			_service = new MemberService(context);
+			// 创建服务集合
+			var serviceCollection = new ServiceCollection();
+			// 向服务集合中添加数据保护服务
+			serviceCollection.AddDataProtection();
+			// 构建服务提供程序
+			var serviceProvider = serviceCollection.BuildServiceProvider();
+			// 从服务提供程序中获取数据保护服务
+			var dataProtectionProvider = serviceProvider.GetRequiredService<IDataProtectionProvider>();
+			// 建立保護器 
+			_dataProtector = dataProtectionProvider.CreateProtector("SamplePurpose");
 		}
 
         // GET: api/Members
@@ -52,21 +68,41 @@ namespace RGB.Back.Controllers
 
         [HttpPost("Login")]
         //LoginDTO loginDto
-        public async Task<string> Login(LoginDTO loginDto)
+        public async Task<List<string>> Login(LoginDTO loginDto)
 		{
             var result= _service.ValidLogin(loginDto); // 驗證帳密是否ok,且是有效的會員
-            if (result == false)
+            var memberId = result.Item2.ToString();
+            if (result.Item1 == false)
             {
-                return "帳號或密碼錯誤";
+				string errorMessage = "帳號或密碼錯誤";
+                string id = "0";
+				List<string> errors = new List<string>();
+                errors.Add(errorMessage);
+				errors.Add(id);
+				return errors;
             }
             else 
             {
-				return "登入成功";
+				string sussceMessage = "登入成功";
+				List<string> sussce = new List<string>();
+				var protectId = _dataProtector.Protect(memberId);
+				sussce.Add(sussceMessage);
+				sussce.Add(protectId);
+				//ProcessLogin(memberId);
+                return sussce;
 			}
 		}
 
+		[HttpPost("MemberId")]
+		public async Task<string> MemberId(string protectId)
+        {
+			var Id = _dataProtector.Unprotect(protectId);
+			return Id;
+		}
+
+
 		[HttpPost("2")]
-		public String Logout(LoginDTO loginDto)
+		public System.String Logout(LoginDTO loginDto)
 		{
 
 			DeleteCookie(); // 刪除cookie
@@ -79,7 +115,7 @@ namespace RGB.Back.Controllers
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		//修改
 		[HttpPut("{id}")]
-        public async Task<String> EditMember(int id, MemberDTO memberdto)
+        public async Task<System.String> EditMember(int id, MemberDTO memberdto)
         {
             if (id != memberdto.Id)
             {
@@ -152,19 +188,23 @@ namespace RGB.Back.Controllers
             return _context.Members.Any(e => e.Id == id);
         }
 
-		//      //將使用者資訊存入cookie
-		//private void ProcessLogin(LoginDTO LoginDto)
-		//{
-		//	CookieOptions options = new CookieOptions();
-		//	// 设置过期时间
-		//	options.Expires = DateTime.Now.AddHours(1);
-		//	HttpContext.Response.Cookies.Append("Account", LoginDto.Account, options);
-		//}
+        //      //將使用者資訊存入cookie
+        private void ProcessLogin(string memberId)
+        {
+            CookieOptions options = new CookieOptions();
+            // 设置过期时间
+            options.Expires = DateTime.Now.AddHours(1);
+			var protectText = _dataProtector.Protect(memberId);
+			var unprotectText = _dataProtector.Unprotect(protectText);
+			HttpContext.Response.Cookies.Append("Account", protectText, options);
+            HttpContext.Response.Cookies.Append("AccountUN", unprotectText, options);
+        }
 
-		//刪除cookie
-		private void DeleteCookie()
+        //刪除cookie
+        private void DeleteCookie()
 		{
 			HttpContext.Response.Cookies.Delete("Account");
+			//HttpContext.Response.Cookies.Delete("AccountUN");
 		}
 	}
 }

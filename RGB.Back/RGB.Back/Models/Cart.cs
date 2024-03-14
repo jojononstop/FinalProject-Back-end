@@ -9,15 +9,11 @@ public partial class Cart
 {
     public int Id { get; set; }
 
-    public int GameId { get; set; }
-
     public int MemberId { get; set; }
 
-    public int DiscountId { get; set; }
+    public DateTime CreateAt { get; set; }
 
-    public decimal Total { get; set; }
-
-    public virtual Game Game { get; set; }
+    public DateTime UpdateAt { get; set; }
 
     public virtual Member Member { get; set; }
 }

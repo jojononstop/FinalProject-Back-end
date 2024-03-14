@@ -11,15 +11,27 @@ public partial class BillDetail
 
     public int MemberId { get; set; }
 
-    public decimal FinalPayment { get; set; }
+    public string Name { get; set; }
 
-    public int BounsPoint { get; set; }
+    public string Number { get; set; }
 
-    public DateTime TransactionDate { get; set; }
+    public string Address { get; set; }
+
+    public string Sn { get; set; }
+
+    public int Amount { get; set; }
+
+    public string ShippingStatus { get; set; }
+
+    public string PaymentStatus { get; set; }
+
+    public int? BounsPoint { get; set; }
+
+    public DateTime CreateAt { get; set; }
+
+    public DateTime UpdateAt { get; set; }
 
     public int? DiscountId { get; set; }
-
-    public virtual ICollection<BillItem> BillItems { get; set; } = new List<BillItem>();
 
     public virtual ICollection<Collection> Collections { get; set; } = new List<Collection>();
 

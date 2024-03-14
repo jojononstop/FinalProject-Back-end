@@ -49,14 +49,14 @@ namespace RGB.Back.Service
 			return memberTagList;
 		}
 
-		public bool ValidLogin(LoginDTO loginDto)
+		public (bool, int) ValidLogin(LoginDTO loginDto)
 		{
 
 			// 根據account(帳號)取得 Member
 			var member = _context.Members.FirstOrDefault(p => p.Account == loginDto.Account);
 			if (member == null)
 			{
-				return false;// 原則上, 不要告知細節
+				return (false,0);
 			}
 
 			//// 檢查是否已經確認
@@ -71,9 +71,9 @@ namespace RGB.Back.Service
 
 			if (string.Compare(member.Password, loginDto.Password, true) != 0)
 			{
-				return false;
+				return (false, 0);
 			}
-			return true;
+			return (true,member.Id)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       ;
 		}
 	}
 }
