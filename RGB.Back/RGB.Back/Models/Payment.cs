@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace RGB.Back.Models;
 
-public partial class BillItem
+public partial class Payment
 {
     public int Id { get; set; }
 
@@ -13,13 +13,15 @@ public partial class BillItem
 
     public int GameId { get; set; }
 
-    public string GameName { get; set; }
+    public string PaymentMethod { get; set; }
 
-    public int Qty { get; set; }
+    public bool IsSuccess { get; set; }
 
-    public decimal Price { get; set; }
+    public DateTime PaidAt { get; set; }
 
-    public int Total { get; set; }
+    public string Message { get; set; }
 
-    public virtual Game Game { get; set; }
+    public DateTime CreateAt { get; set; }
+
+    public DateTime UpdateAt { get; set; }
 }
