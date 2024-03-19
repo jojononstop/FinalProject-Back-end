@@ -263,6 +263,19 @@ public partial class RizzContext : DbContext
                 .HasConstraintName("FK_Carts_Members");
         });
 
+        modelBuilder.Entity<CartItem>(entity =>
+        {
+            entity.Property(e => e.GameName)
+                .IsRequired()
+                .HasMaxLength(500);
+            entity.Property(e => e.Image)
+                .IsRequired()
+                .HasMaxLength(500)
+                .HasColumnName("image");
+            entity.Property(e => e.Price).HasColumnType("decimal(18, 0)");
+            entity.Property(e => e.Total).HasColumnType("decimal(18, 0)");
+        });
+
         modelBuilder.Entity<Collection>(entity =>
         {
             entity.Property(e => e.Id).ValueGeneratedNever();
@@ -446,6 +459,7 @@ public partial class RizzContext : DbContext
             entity.Property(e => e.BanTime).HasColumnType("datetime");
             entity.Property(e => e.Birthday).HasColumnType("datetime");
             entity.Property(e => e.ConfirmCode).HasMaxLength(256);
+            entity.Property(e => e.Google).HasMaxLength(256);
             entity.Property(e => e.LastLoginDate).HasColumnType("datetime");
             entity.Property(e => e.Mail)
                 .IsRequired()
