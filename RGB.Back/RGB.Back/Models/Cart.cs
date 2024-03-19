@@ -11,9 +11,5 @@ public partial class Cart
 
     public int MemberId { get; set; }
 
-    public DateTime CreateAt { get; set; }
-
-    public DateTime UpdateAt { get; set; }
-
     public virtual Member Member { get; set; }
 }

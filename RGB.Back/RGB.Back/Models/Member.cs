@@ -33,6 +33,8 @@ public partial class Member
 
     public string ConfirmCode { get; set; }
 
+    public string Google { get; set; }
+
     public int? Role { get; set; }
 
     public virtual ICollection<AttachedComment> AttachedComments { get; set; } = new List<AttachedComment>();
