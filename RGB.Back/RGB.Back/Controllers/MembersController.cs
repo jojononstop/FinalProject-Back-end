@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.DependencyInjection;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Google.Apis.Auth;
+using System.Diagnostics.Metrics;
 
 
 
@@ -30,10 +31,12 @@ namespace RGB.Back.Controllers
 		private readonly MemberService _service;
 		private readonly IDataProtector _dataProtector;
 
+
 		public MembersController(RizzContext context)
         {
-            _context = context;
+			_context = context;
 			_service = new MemberService(context);
+
 			// 创建服务集合
 			var serviceCollection = new ServiceCollection();
 			// 向服务集合中添加数据保护服务
@@ -151,6 +154,7 @@ namespace RGB.Back.Controllers
         [HttpPost("Create")]
         public async Task<string> CreateMember(CreateMemberDTO cmDto)
         {
+			//var urlTemplate = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/Members";
 			var result= _service.CreateMember(cmDto);
 
             return result;

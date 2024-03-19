@@ -1,8 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Azure.Core;
+using Microsoft.EntityFrameworkCore;
 using NuGet.Common;
 using RGB.Back.DTOs;
 using RGB.Back.Infra;
 using RGB.Back.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using System;
 
 namespace RGB.Back.Service
@@ -122,8 +125,23 @@ namespace RGB.Back.Service
 			_context.Members.Add(member);
 			_context.SaveChanges();
 
+			// 發出確認信
+
+			//var urlTemplate = Request.Url.Scheme + "://" +  // 生成 http:.// 或 https://
+			//				Request.Url.Authority + "/" + // 生成網域名稱或 ip
+			//				"Developer/ActiveRegister?developerid={0}&confirmCode={1}";
+			//var url = string.Format(urlTemplate, developer.Id, developer.ConfirmCode);
+			//string name = vm.Name;
+			//string email = vm.EMail;
+			//前台網站
+			var url = "";
+			string name = cmDto.Account; // 請確認您的 CreateMemberDTO 類中是否包含了名稱（Name）和電子郵件（EMail）屬性
+			string email = cmDto.Mail;
+			new EMailHelper().SendConfirmRegisterEmail(url, name, email);
+
 			return "註冊完成";
 		}
+
 		//發送驗證信
 		public void SendConfirmationEmail() 
 		{
