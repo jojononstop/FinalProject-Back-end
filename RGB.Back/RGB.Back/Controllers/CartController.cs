@@ -27,18 +27,18 @@ namespace RGB.Back.Controllers
 
         // POST api/<controller>
         [HttpPost]
-        public IActionResult AddToCart(RequestInfo model, [FromServices] GameRepository productRepository, [FromServices] CartRepository cartRepository)
+        public IActionResult AddToCart(RequestInfo model, [FromServices] GameRepository gameRepository, [FromServices] CartRepository cartRepository)
         {
-            var productId = model.GameId;
+            var gameId = model.GameId;
             var quantity = model.Quantity;
 
-            var product = productRepository.Get(productId);
-            if (product == null)
+            var game = gameRepository.Get(gameId);
+            if (game == null)
             {
                 return NotFound();
             }
 
-            var cart = cartRepository.TryAddToCart(product, quantity);
+            var cart = cartRepository.TryAddToCart(game, quantity);
             return Ok(cart);
         }
 
