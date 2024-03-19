@@ -89,6 +89,7 @@ namespace RGB.Back.Controllers
 				var protectId = _dataProtector.Protect(memberId);
 				sussce.Add(sussceMessage);
 				sussce.Add(protectId);
+
 				//ProcessLogin(memberId);
                 return sussce;
 			}
@@ -116,7 +117,7 @@ namespace RGB.Back.Controllers
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		//修改
 		[HttpPut("{id}")]
-        public async Task<System.String> EditMember(int id, MemberDTO memberdto)
+        public async Task<string> EditMember(int id, MemberDTO memberdto)
         {
             if (id != memberdto.Id)
             {
@@ -147,25 +148,12 @@ namespace RGB.Back.Controllers
         // POST: api/Members
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         //新增
-        [HttpPost]
-        public async Task<string> CreateMember(MemberDTO memberdto)
+        [HttpPost("Create")]
+        public async Task<string> CreateMember(CreateMemberDTO cmDto)
         {
-            var member = new Member()
-            {
-                Account = memberdto.Account,
-                Password = memberdto.Password,
-                Mail = memberdto.Mail,
-                AvatarUrl = null,
-                RegistrationDate = DateTime.Now,
-                BanTime =null,
-                Bonus = 0,
-                LastLoginDate = DateTime.Now,
-                Birthday = null
-			};
-            _context.Members.Add(member);
-            await _context.SaveChangesAsync();
+			var result= _service.CreateMember(cmDto);
 
-            return "註冊成功";
+            return result;
         }
 
         // DELETE: api/Members/5
@@ -213,7 +201,7 @@ namespace RGB.Back.Controllers
 		/// </summary>
 		/// <returns></returns>
 		[HttpPost("LoginGoogle")]
-		public async Task<System.String> ValidGoogleLogin()
+		public async Task<string> ValidGoogleLogin()
 		{
 			string? formCredential = Request.Form["credential"]; //回傳憑證
 			string? formToken = Request.Form["g_csrf_token"]; //回傳令牌
@@ -296,5 +284,22 @@ namespace RGB.Back.Controllers
 			}
 			return payload;
 		}
+
+		//確認郵箱
+		[HttpPost("ActiveRegister")]
+		public async Task<string> ActiveRegister(int id, string confirmCode)
+		{
+			var result = _service.ActiveRegister(id, confirmCode);
+			if (result == false)
+			{
+				return "驗證失敗";
+			}
+			else
+			{
+				return "已通過驗證";
+			}
+		}
+
+
 	}
 }

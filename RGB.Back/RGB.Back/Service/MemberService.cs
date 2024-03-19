@@ -73,7 +73,12 @@ namespace RGB.Back.Service
 			{
 				return (false, 0);
 			}
-			return (true,member.Id)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       ;
+			else 
+			{
+				member.LastLoginDate=DateTime.Now;
+				_context.SaveChanges();
+				return (true, member.Id);
+			}
 		}
 
 		public (bool, int) FindMemberIdByGoogle(string GoogleMail)
@@ -86,7 +91,65 @@ namespace RGB.Back.Service
 			else { 
 				return (true, member.Id); 
 			}
+		}
+		//work
+		// 創建會員
+		public string CreateMember(CreateMemberDTO cmDto)
+		{
+			var MemberInDb = _context.Members.FirstOrDefault(p => p.Account == cmDto.Account);
+			if (MemberInDb != null)
+			{
+				return "帳號已經存在";
+			}
+			var confirmCode = Guid.NewGuid().ToString("N");
+			Member member = new Member()
+			{
+				Account = cmDto.Account,
+				//待加密
+				Password = cmDto.Password,
+				Mail = cmDto.Mail,
+				AvatarUrl = null,
+				RegistrationDate = DateTime.Now,
+				BanTime = null,
+				Bonus = 0,
+				LastLoginDate = DateTime.Now,
+				Birthday = null,
+				IsConfirmed = false,
+				ConfirmCode = confirmCode,
+				Google = null,
+				Role = null
+			};
+			_context.Members.Add(member);
+			_context.SaveChanges();
 
+			return "註冊完成";
+		}
+		//發送驗證信
+		public void SendConfirmationEmail() 
+		{
+
+		}
+
+		public bool ActiveRegister (int memberId, string confirmCode)
+		{
+			//驗證傳入值是否合理
+
+			if (memberId <= 0 || string.IsNullOrEmpty(confirmCode))
+			{
+				return false; // 在view中,我們會顯示'已開通,謝謝'
+			}
+
+			// 根據 Id, confirmCode 取得 未確認的 member
+			Member member = _context.Members.FirstOrDefault(m => m.Id == memberId && m.IsConfirmed == false && m.ConfirmCode == confirmCode);
+			if (member == null) return false;
+
+			// 如果有找到, 將它更新為已確認
+			member.IsConfirmed = true; // 視為已確認的會員
+			member.ConfirmCode = null; // 清空 confirm code 欄位
+
+			_context.SaveChanges();
+
+			return true;
 		}
 	}
 }

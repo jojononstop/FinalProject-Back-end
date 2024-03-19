@@ -9,9 +9,17 @@ public partial class CartItem
 {
     public int Id { get; set; }
 
-    public int CartId { get; set; }
-
     public int GameId { get; set; }
 
+    public string GameName { get; set; }
+
     public int Qty { get; set; }
+
+    public int CartId { get; set; }
+
+    public decimal Price { get; set; }
+
+    public decimal Total { get; set; }
+
+    public string Image { get; set; }
 }
