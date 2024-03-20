@@ -1,6 +1,8 @@
-﻿namespace RGB.Back.Models.ViewModels
+﻿using RGB.Back.Models;
+
+namespace RGB.Back.DTOs
 {
-    public class CartItem
+    public class CartItemDTO
     {
         public int Id { get; set; }
         public Game Game { get; set; }

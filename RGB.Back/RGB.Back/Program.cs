@@ -1,14 +1,12 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using RGB.Back.Models;
-using RGB.Back.Repo;
-using RGB.Back.Repos;
-using RGB.Back.Repos;
+using RGB.Back.Service;
 
 
 namespace RGB.Back
 {
-	public class Program
+    public class Program
 	{
 		public static void Main(string[] args)
 		{
@@ -31,9 +29,9 @@ namespace RGB.Back
                     });
             });
 
-            // 注册 RGB.Back.Repos.CartRepository 服务
-            builder.Services.AddScoped<CartRepository>();
-            builder.Services.AddScoped<GameRepository>();
+            // 注入 RGB.Back.Sefvice
+            builder.Services.AddScoped<CartService>();
+            builder.Services.AddScoped<GameService>();
 
 
             builder.Services.AddControllers();
