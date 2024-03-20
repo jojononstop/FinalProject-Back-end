@@ -21,6 +21,14 @@ namespace RGB.Back.Service
             return DBToBonusDto(bonusProducts);
         }
 
+        //Get All Bonus Product Type
+        public async Task<List<BonusDto>> GetAllBonusProductTypeAsync()
+        {
+            var bonusProductType = await _context.BonusProductTypes.AsNoTracking().ToListAsync();
+
+            return DBToBonusDto(bonusProductType);
+        }
+
         //Get Member BonusItem
         public async Task<List<MemberBonusItemDto>> GetMemberBonusItemAsync(int memberId)
         {
@@ -140,6 +148,23 @@ namespace RGB.Back.Service
                     Price = item.Price,
                     URL = item.Url,
                     Name = item.Name
+                };
+                bonusList.Add(bonusDto);
+            }
+            return bonusList;
+        }
+
+        //DB to BonusDTO
+        private List<BonusDto> DBToBonusDto(List<BonusProductType> bonusProductType)
+        {
+            var bonusList = new List<BonusDto>();
+
+            foreach (var item in bonusProductType)
+            {
+                var bonusDto = new BonusDto
+                {
+                    Id = item.Id,
+                    ProductTypeName = item.Name
                 };
                 bonusList.Add(bonusDto);
             }

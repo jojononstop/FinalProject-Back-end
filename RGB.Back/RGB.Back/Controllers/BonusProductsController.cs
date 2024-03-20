@@ -32,6 +32,14 @@ namespace RGB.Back.Controllers
             return await _context.BonusProducts.ToListAsync();
         }
 
+        //GET: api/BonusProductsType
+        //GetAllType
+        [HttpGet("Type")]
+        public async Task<List<BonusProductType>> GetAllBonusProductTypeAsync()
+        {
+            return await _context.BonusProductTypes.ToListAsync();
+        }
+
         // GET: api/BonusProducts/5
         // GetById
         [HttpGet("{id}")]

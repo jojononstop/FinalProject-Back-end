@@ -7,6 +7,9 @@ GET BonusProduct
 [V]無法抓到商品Type類型
 [V]完成
 
+GET AllTypes
+[V]完成
+
 GET BonusProducts
 [V]找不到名稱
 [V]完成
