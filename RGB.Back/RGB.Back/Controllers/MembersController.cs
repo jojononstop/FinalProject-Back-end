@@ -17,6 +17,7 @@ using Microsoft.Extensions.DependencyInjection;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Google.Apis.Auth;
 using System.Diagnostics.Metrics;
+using Microsoft.CodeAnalysis;
 
 
 
@@ -200,94 +201,121 @@ namespace RGB.Back.Controllers
 			//HttpContext.Response.Cookies.Delete("AccountUN");
 		}
 
+		//vue傳入Id google登入
+		[HttpPost("GoogleId")]
+		public async Task<List<string>> ValidGoogleId(string googleId)
+		{
+			Member member = _context.Members.FirstOrDefault(m => m.Google == googleId);
+			if (member == null) {
+				List<string> errors = new List<string>();
+				errors.Add("新的google帳號");
+				errors.Add("0");
+				return errors;
+			} 
+			else
+			{
+			    var memberId = member.Id.ToString();
+
+				string sussceMessage = "登入成功";
+				List<string> sussces = new List<string>();
+				var protectId = _dataProtector.Protect(memberId);
+				sussces.Add(sussceMessage);
+				sussces.Add(protectId);
+				return sussces;
+			}
+		}
+
+
+
+
 		/// <summary>
 		/// 驗證 Google 登入授權
 		/// </summary>
 		/// <returns></returns>
-		[HttpPost("LoginGoogle")]
-		public async Task<string> ValidGoogleLogin()
-		{
-			string? formCredential = Request.Form["credential"]; //回傳憑證
-			string? formToken = Request.Form["g_csrf_token"]; //回傳令牌
-			string? cookiesToken = Request.Cookies["g_csrf_token"]; //Cookie 令牌
-			string result = "";
+		//[HttpPost("LoginGoogle")]
+		//public async Task<string> ValidGoogleLogin()
+		//{
+		//	string? formCredential = Request.Form["credential"]; //回傳憑證
+		//	string? formToken = Request.Form["g_csrf_token"]; //回傳令牌
+		//	string? cookiesToken = Request.Cookies["g_csrf_token"]; //Cookie 令牌
+		//	string result = "";
 
-			// 驗證 Google Token
-			GoogleJsonWebSignature.Payload? payload = await VerifyGoogleToken(formCredential, formToken, cookiesToken);
-			if (payload == null)
-			{
-				// 驗證失敗
-				result = "驗證 Google 授權失敗";
-			}
-			else
-			{
-				//驗證成功，取使用者資訊內容
-				result = "驗證 Google 授權成功" + "<br>";
-				result += "Email:" + payload.Email + "<br>";
-				result += "Name:" + payload.Name + "<br>";
-				result += "Picture:" + payload.Picture;
-			}
+		//	// 驗證 Google Token
+		//	GoogleJsonWebSignature.Payload? payload = await VerifyGoogleToken(formCredential, formToken, cookiesToken);
+		//	if (payload == null)
+		//	{
+		//		// 驗證失敗
+		//		result = "驗證 Google 授權失敗";
+		//	}
+		//	else
+		//	{
+		//		//驗證成功，取使用者資訊內容
+		//		result = "驗證 Google 授權成功" + "<br>";
+		//		result += "Email:" + payload.Email + "<br>";
+		//		result += "Name:" + payload.Name + "<br>";
+		//		result += "Picture:" + payload.Picture;
+		//	}
 
-			return result;
-		}
+		//	return result;
+		//}
 
-		/// <summary>
-		/// 驗證 Google Token
-		/// </summary>
-		/// <param name="formCredential"></param>
-		/// <param name="formToken"></param>
-		/// <param name="cookiesToken"></param>
-		/// <returns></returns>
+		///// <summary>
+		///// 驗證 Google Token
+		///// </summary>
+		///// <param name="formCredential"></param>
+		///// <param name="formToken"></param>
+		///// <param name="cookiesToken"></param>
+		///// <returns></returns>
 
-		private async Task<GoogleJsonWebSignature.Payload?> VerifyGoogleToken(string? formCredential, string? formToken, string? cookiesToken)
-		{
-			// 檢查空值
-			if (formCredential == null || formToken == null && cookiesToken == null)
-			{
-				return null;
-			}
+		//private async Task<GoogleJsonWebSignature.Payload?> VerifyGoogleToken(string? formCredential, string? formToken, string? cookiesToken)
+		//{
+		//	// 檢查空值
+		//	if (formCredential == null || formToken == null && cookiesToken == null)
+		//	{
+		//		return null;
+		//	}
 
-			GoogleJsonWebSignature.Payload? payload;
-			try
-			{
-				// 驗證 token
-				if (formToken != cookiesToken)
-				{
-					return null;
-				}
+		//	GoogleJsonWebSignature.Payload? payload;
+		//	try
+		//	{
+		//		// 驗證 token
+		//		if (formToken != cookiesToken)
+		//		{
+		//			return null;
+		//		}
 
-				// 驗證憑證
-				IConfiguration Config = new ConfigurationBuilder().AddJsonFile("appSettings.json").Build();
-				string GoogleApiClientId = Config.GetSection("GoogleApiClientId").Value;
-				var settings = new GoogleJsonWebSignature.ValidationSettings()
-				{
-					Audience = new List<string>() { GoogleApiClientId }
-				};
-				payload = await GoogleJsonWebSignature.ValidateAsync(formCredential, settings);
-				if (!payload.Issuer.Equals("accounts.google.com") && !payload.Issuer.Equals("https://accounts.google.com"))
-				{
-					return null;
-				}
-				if (payload.ExpirationTimeSeconds == null)
-				{
-					return null;
-				}
-				else
-				{
-					DateTime now = DateTime.Now.ToUniversalTime();
-					DateTime expiration = DateTimeOffset.FromUnixTimeSeconds((long)payload.ExpirationTimeSeconds).DateTime;
-					if (now > expiration)
-					{
-						return null;
-					}
-				}
-			}
-			catch
-			{
-				return null;
-			}
-			return payload;
-		}
+		//		// 驗證憑證
+		//		IConfiguration Config = new ConfigurationBuilder().AddJsonFile("appSettings.json").Build();
+		//		string GoogleApiClientId = Config.GetSection("GoogleApiClientId").Value;
+		//		var settings = new GoogleJsonWebSignature.ValidationSettings()
+		//		{
+		//			Audience = new List<string>() { GoogleApiClientId }
+		//		};
+		//		payload = await GoogleJsonWebSignature.ValidateAsync(formCredential, settings);
+		//		if (!payload.Issuer.Equals("accounts.google.com") && !payload.Issuer.Equals("https://accounts.google.com"))
+		//		{
+		//			return null;
+		//		}
+		//		if (payload.ExpirationTimeSeconds == null)
+		//		{
+		//			return null;
+		//		}
+		//		else
+		//		{
+		//			DateTime now = DateTime.Now.ToUniversalTime();
+		//			DateTime expiration = DateTimeOffset.FromUnixTimeSeconds((long)payload.ExpirationTimeSeconds).DateTime;
+		//			if (now > expiration)
+		//			{
+		//				return null;
+		//			}
+		//		}
+		//	}
+		//	catch
+		//	{
+		//		return null;
+		//	}
+		//	return payload;
+		//}
 
 		//確認郵箱
 		[HttpPost("ActiveRegister")]
