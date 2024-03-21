@@ -57,6 +57,22 @@ namespace RGB.Back.Controllers
                 return Ok(cart); // 返回購物車內容
             }
 
+            [HttpGet("{Id}")]
+            public IActionResult GetCartById(int Id, [FromServices] CartService cartService)
+            {
+                var cart = cartService.GetCartById(Id); // 根據指定的 Id 獲取購物車內容
+
+                // 假設 cart 為空表示找不到指定 Id 的購物車內容
+                if (cart == null)
+                {
+                    return NotFound(); // 返回 404 Not Found 錯誤
+                }
+
+                return Ok(cart); // 返回購物車內容
+            }
+
+
+
             // 刪除購物車中的指定項目
             [HttpDelete("{id}")]
             public async Task<IActionResult> DeleteCartItem(int id)
