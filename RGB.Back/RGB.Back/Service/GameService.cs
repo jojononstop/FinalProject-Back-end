@@ -49,7 +49,7 @@ namespace RGB.Back.Service
 			var DLCs = GetDLCs(gameId);
 			var images = GetImages(gameId);
 			var ratings = GetRating(gameId);
-			var discointData = GetDiscountData(game,discounts);
+			var discointData = GetDiscountData(game, discounts);
 
 			gameDto.Id = game.Id;
 			gameDto.Name = game.Name;
@@ -66,8 +66,8 @@ namespace RGB.Back.Service
 			gameDto.DLCs = DLCs;
 			gameDto.DisplayImages = images;
 			gameDto.Rating = ratings;
-			gameDto.DiscountPercent =discointData.discountPercent;
-			gameDto.DiscountPrice =discointData.discountPrice;
+			gameDto.DiscountPercent = discointData.discountPercent;
+			gameDto.DiscountPrice = discointData.discountPrice;
 
 			return gameDto;
 		}
@@ -77,7 +77,7 @@ namespace RGB.Back.Service
 			var games = _context.Games.AsNoTracking()
 				.Where(x => x.DeveloperId == developerId)
 				.ToList();
-	
+
 			return GameToGameDetailDTO(games);
 		}
 
@@ -281,9 +281,12 @@ namespace RGB.Back.Service
 
 			var rating = 0;
 
-			if (comments.Count == 0) { 
-				return 0; 
-			}else{
+			if (comments.Count == 0)
+			{
+				return 0;
+			}
+			else
+			{
 				foreach (var comment in comments)
 				{ rating += comment.Rating; }
 
@@ -329,7 +332,21 @@ namespace RGB.Back.Service
 
 			return gameList;
 		}
+
+		public GameDetailDTO GetMainGame(int dlcId)
+		{
+			var gameId = _context.Dlcs.AsNoTracking()
+				.Where(x => x.DlcId == dlcId)
+				.Select(x => x.MainGameId)
+				.FirstOrDefault();
+			if(gameId != 0)
+			{
+				return GetGameDetailByGameId(gameId);
+			}
+			else
+			{
+				return null;
+			}
+		}
 	}
-
-
 }

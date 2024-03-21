@@ -11,32 +11,32 @@ using RGB.Back.Service;
 
 namespace RGB.Back.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class GamesController : ControllerBase
-    {
-        private readonly RizzContext _context;
-        private readonly GameService _service;
+	[Route("api/[controller]")]
+	[ApiController]
+	public class GamesController : ControllerBase
+	{
+		private readonly RizzContext _context;
+		private readonly GameService _service;
 
-        public GamesController(RizzContext context)
-        {
-            _context = context;
-            _service = new GameService(context);
-        }
-
-        // GET: api/Games
-        [HttpGet]
-        public async Task<IEnumerable<GameDetailDTO>> GetGames()
-        {
-            return _service.GetAllGameDetail();
+		public GamesController(RizzContext context)
+		{
+			_context = context;
+			_service = new GameService(context);
 		}
 
-        // GET: api/Games/5
-        [HttpGet("{id}")]
-        public async Task<GameDetailDTO> GetGame(int id)
-        {
-            var game = _service.GetGameDetailByGameId(id);
-            return game;
+		// GET: api/Games
+		[HttpGet]
+		public async Task<IEnumerable<GameDetailDTO>> GetGames()
+		{
+			return _service.GetAllGameDetail();
+		}
+
+		// GET: api/Games/5
+		[HttpGet("{id}")]
+		public async Task<GameDetailDTO> GetGame(int id)
+		{
+			var game = _service.GetGameDetailByGameId(id);
+			return game;
 		}
 
 		// GET: api/Games/developer/5
@@ -57,9 +57,17 @@ namespace RGB.Back.Controllers
 
 		// GET: api/Games/developer/5
 		[HttpGet("discount/{discountId}")]
-		public async Task<IEnumerable<GameDetailDTO>> GetGamesByDiscount(int discountId)
+		public async Task<IEnumerable<GameDetailDTO>> GetGamesByDiscount(int dlcId)
 		{
-			var games = _service.GetDiscountedGames(discountId);
+			var games = _service.GetDiscountedGames(dlcId);
+			return games;
+		}
+
+		[HttpGet("dlc/{dlcId}")]
+		public async Task<GameDetailDTO> GetMainGame(int dlcId)
+		{
+
+			var games = _service.GetMainGame(dlcId);
 			return games;
 		}
 
