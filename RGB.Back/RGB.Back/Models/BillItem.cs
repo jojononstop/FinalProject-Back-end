@@ -13,13 +13,11 @@ public partial class BillItem
 
     public int GameId { get; set; }
 
-    public decimal Quantity { get; set; }
+    public string GameName { get; set; }
 
-    public decimal Total { get; set; }
+    public int Qty { get; set; }
 
-    public DateTime CreateAt { get; set; }
-
-    public DateTime UpdateAt { get; set; }
+    public decimal Price { get; set; }
 
     public int Total { get; set; }
 

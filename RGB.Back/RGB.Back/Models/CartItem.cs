@@ -11,15 +11,15 @@ public partial class CartItem
 
     public int GameId { get; set; }
 
+    public string GameName { get; set; }
+
+    public int Qty { get; set; }
+
     public int CartId { get; set; }
 
-    public decimal Quantity { get; set; }
+    public decimal Price { get; set; }
 
-    public DateTime CreateAt { get; set; }
+    public decimal Total { get; set; }
 
-    public DateTime UpdateAt { get; set; }
-
-    public virtual Game Id1 { get; set; }
-
-    public virtual Cart IdNavigation { get; set; }
+    public string Image { get; set; }
 }

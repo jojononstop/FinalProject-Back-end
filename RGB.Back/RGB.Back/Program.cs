@@ -1,4 +1,5 @@
-ï»¿
+
+
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using RGB.Back.Service;
 using RGB.Back.Service;
 
 
@@ -32,19 +34,19 @@ namespace RGB.Back
 				ValidateIssuer = false,
 				ValidateAudience = false,
 
-				//é©—è­‰IssuerSigningKey
+				//ÅçÃÒIssuerSigningKey
 				ValidateIssuerSigningKey = true,
-				//ä»¥JwtConfig:Secretç‚ºKeyï¼Œåšç‚ºJwtåŠ å¯†
+				//¥HJwtConfig:Secret¬°Key¡A°µ¬°Jwt¥[±K
 				IssuerSigningKey = new SymmetricSecurityKey(key),
 
-				//é©—è­‰æ™‚æ•ˆ
+				//ÅçÃÒ®É®Ä
 				ValidateLifetime = true,
 
-				//è¨­å®štokençš„éŽæœŸæ™‚é–“å¯ä»¥ä»¥ç§’ä¾†è¨ˆç®—ï¼Œç•¶tokençš„éŽæœŸæ™‚é–“ä½Žæ–¼äº”åˆ†é˜æ™‚ä½¿ç”¨ã€‚
+				//³]©wtokenªº¹L´Á®É¶¡¥i¥H¥H¬í¨Ó­pºâ¡A·ítokenªº¹L´Á®É¶¡§C©ó¤­¤ÀÄÁ®É¨Ï¥Î¡C
 				ClockSkew = TimeSpan.Zero
 			};
 
-			//è¨»å†ŠtokenValidationParamsï¼Œå¾ŒçºŒå¯ä»¥æ³¨å…¥ä½¿ç”¨ã€‚
+			//µù¥UtokenValidationParams¡A«áÄò¥i¥Hª`¤J¨Ï¥Î¡C
 			builder.Services.AddSingleton(tokenValidationParams);
 
 			builder.Services.AddAuthentication(options =>
@@ -58,7 +60,7 @@ namespace RGB.Back
 				jwt.SaveToken = true;
 				jwt.TokenValidationParameters = tokenValidationParams;
 			});
-			//ä»¥ä¸Šjwt
+			//¥H¤Wjwt
 			// Add services to the container.
 			builder.Services.AddDbContext<RizzContext>(options =>
 			{
@@ -72,6 +74,8 @@ namespace RGB.Back
 							});
 
             builder.Services.AddScoped<ChatService>();
+            builder.Services.AddScoped<CartService>();
+            builder.Services.AddScoped<GameService>();
 
 
             string CorsPolicy = "AllowAny";
@@ -92,18 +96,15 @@ namespace RGB.Back
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
-
-			app.UseCors();
-			app.UseHttpsRedirection();
-			//å•Ÿç”¨èº«åˆ†è­˜åˆ¥
+			// Configure the HTTP request pipeline.
+			if (app.Environment.IsDevelopment())
+			{
+				app.UseSwagger();
+				app.UseSwaggerUI();
+			}
+			//±Ò¥Î¨­¤ÀÃÑ§O
 			app.UseAuthentication();
-			//å•Ÿç”¨æŽˆæ¬ŠåŠŸèƒ½
+			//±Ò¥Î±ÂÅv¥\¯à
 			app.UseCors(CorsPolicy);
           
             app.UseHttpsRedirection();
@@ -115,14 +116,10 @@ namespace RGB.Back
 			{
 				options.Transports = HttpTransportType.WebSockets | HttpTransportType.LongPolling;
 			});
-
-			app.UseAuthorization();
-
-
-            app.MapControllers();
-
+            
+           
 			app.Run();
 		}
+        }
+    }
 
-	}
-}

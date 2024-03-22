@@ -148,35 +148,7 @@ public partial class RizzContext : DbContext
 
         modelBuilder.Entity<BillDetail>(entity =>
         {
-            entity.Property(e => e.Address)
-                .IsRequired()
-                .HasMaxLength(500)
-                .HasColumnName("address");
-            entity.Property(e => e.Amount).HasColumnName("amount");
-            entity.Property(e => e.CreateAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-            entity.Property(e => e.Name)
-                .IsRequired()
-                .HasMaxLength(500);
-            entity.Property(e => e.Number)
-                .IsRequired()
-                .HasMaxLength(10);
-            entity.Property(e => e.PaymentStatus)
-                .IsRequired()
-                .HasMaxLength(500)
-                .HasColumnName("payment_status");
-            entity.Property(e => e.ShippingStatus)
-                .IsRequired()
-                .HasMaxLength(500)
-                .HasColumnName("shipping_status");
-            entity.Property(e => e.Sn)
-                .IsRequired()
-                .HasMaxLength(500)
-                .HasColumnName("sn");
-            entity.Property(e => e.UpdateAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+            entity.HasKey(e => e.Id).HasName("PK_BillDetails_1");
 
             entity.Property(e => e.Address)
                 .IsRequired()
@@ -215,14 +187,7 @@ public partial class RizzContext : DbContext
 
         modelBuilder.Entity<BillItem>(entity =>
         {
-            entity.Property(e => e.CreateAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-            entity.Property(e => e.Quantity).HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.Total).HasColumnType("decimal(18, 0)");
-            entity.Property(e => e.UpdateAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+            entity.HasKey(e => e.Id).HasName("PK_BillItems_1");
 
             entity.Property(e => e.GameName)
                 .IsRequired()
@@ -290,18 +255,7 @@ public partial class RizzContext : DbContext
 
         modelBuilder.Entity<Cart>(entity =>
         {
-            entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.CreateAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-            entity.Property(e => e.UpdateAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-
-            entity.HasOne(d => d.IdNavigation).WithOne(p => p.Cart)
-                .HasForeignKey<Cart>(d => d.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Carts_Discounts");
+            entity.HasKey(e => e.Id).HasName("PK_Carts_1");
 
             entity.HasOne(d => d.Member).WithMany(p => p.Carts)
                 .HasForeignKey(d => d.MemberId)
@@ -311,24 +265,15 @@ public partial class RizzContext : DbContext
 
         modelBuilder.Entity<CartItem>(entity =>
         {
-            entity.Property(e => e.Id).ValueGeneratedOnAdd();
-            entity.Property(e => e.CreateAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-            entity.Property(e => e.Quantity).HasColumnType("decimal(18, 0)");
-            entity.Property(e => e.UpdateAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-
-            entity.HasOne(d => d.IdNavigation).WithOne(p => p.CartItem)
-                .HasForeignKey<CartItem>(d => d.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_CartItems_Carts");
-
-            entity.HasOne(d => d.Id1).WithOne(p => p.CartItem)
-                .HasForeignKey<CartItem>(d => d.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_CartItems_Games");
+            entity.Property(e => e.GameName)
+                .IsRequired()
+                .HasMaxLength(500);
+            entity.Property(e => e.Image)
+                .IsRequired()
+                .HasMaxLength(500)
+                .HasColumnName("image");
+            entity.Property(e => e.Price).HasColumnType("decimal(18, 0)");
+            entity.Property(e => e.Total).HasColumnType("decimal(18, 0)");
         });
 
         modelBuilder.Entity<Collection>(entity =>
@@ -514,6 +459,7 @@ public partial class RizzContext : DbContext
             entity.Property(e => e.BanTime).HasColumnType("datetime");
             entity.Property(e => e.Birthday).HasColumnType("datetime");
             entity.Property(e => e.ConfirmCode).HasMaxLength(256);
+            entity.Property(e => e.Google).HasMaxLength(256);
             entity.Property(e => e.LastLoginDate).HasColumnType("datetime");
             entity.Property(e => e.Mail)
                 .IsRequired()
@@ -558,13 +504,13 @@ public partial class RizzContext : DbContext
 
         modelBuilder.Entity<Payment>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("Payment");
+            entity.ToTable("Payment");
 
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
             entity.Property(e => e.CreateAt).HasColumnType("datetime");
             entity.Property(e => e.GameId).ValueGeneratedOnAdd();
-            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.IsSuccess).HasColumnName("isSuccess");
             entity.Property(e => e.Message)
                 .IsRequired()
