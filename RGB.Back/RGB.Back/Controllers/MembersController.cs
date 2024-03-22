@@ -18,6 +18,14 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using Google.Apis.Auth;
 using System.Diagnostics.Metrics;
 using Microsoft.CodeAnalysis;
+using Microsoft.IdentityModel.Tokens;
+using RGB.Back.Configuration;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.Extensions.Options;
+using Google.Apis.Auth.OAuth2.Requests;
+using Microsoft.AspNetCore.Authorization;
 
 
 
@@ -31,12 +39,13 @@ namespace RGB.Back.Controllers
         private readonly RizzContext _context;
 		private readonly MemberService _service;
 		private readonly IDataProtector _dataProtector;
+		private readonly JwtConfig _jwtConfig;
 
-
-		public MembersController(RizzContext context)
+		public MembersController(IOptionsMonitor<JwtConfig> optionsMonitor,RizzContext context)
         {
 			_context = context;
 			_service = new MemberService(context);
+			_jwtConfig = optionsMonitor.CurrentValue;
 
 			// 创建服务集合
 			var serviceCollection = new ServiceCollection();
@@ -50,44 +59,53 @@ namespace RGB.Back.Controllers
 			_dataProtector = dataProtectionProvider.CreateProtector("SamplePurpose");
 		}
 
-        // GET: api/Members
-        //[HttpGet]
-        //public async Task<ActionResult<IEnumerable<Member>>> GetMembers()
-        //{
-        //    return await _context.Members.ToListAsync();
-        //}
+		// GET: api/Members
+		//[HttpGet]
+		//public async Task<ActionResult<IEnumerable<Member>>> GetMembers()
+		//{
+		//    return await _context.Members.ToListAsync();
+		//}
 
-        //// GET: api/Members/5
-        //[HttpGet("{id}")]
-        //public async Task<Member> GetMember(int id)
-        //{
-        //    var member = await _context.Members.FindAsync(id);
+		//// GET: api/Members/5
+		//[HttpGet("{id}")]
+		//public async Task<Member> GetMember(int id)
+		//{
+		//    var member = await _context.Members.FindAsync(id);
 
-        //    //if (member == null)
-        //    //{
-        //    //    return NotFound();
-        //    //}
+		//    //if (member == null)
+		//    //{
+		//    //    return NotFound();
+		//    //}
 
-        //    return member;
-        //}
-
+		//    return member;
+		//}
         [HttpPost("Login")]
-        //LoginDTO loginDto
-        public async Task<List<string>> Login(LoginDTO loginDto)
+		//LoginDTO loginDto
+		//JwtPayload
+		public async Task<List<string>> Login(LoginDTO loginDto)
 		{
             var result= _service.ValidLogin(loginDto); // 驗證帳密是否ok,且是有效的會員
             var memberId = result.Item2.ToString();
-            if (result.Item1 == false)
-            {
+
+			//JwtSecurityTokenHandler jwtTokenHandler = new JwtSecurityTokenHandler();
+			//呼叫GenerateJwtToken方法，建立jwtToken
+			//AuthResult jwtToken = await GenerateJwtToken(memberId);
+			//var token = jwtTokenHandler.ReadJwtToken(jwtToken.Token);
+			//var payload = token.Payload;
+			//回傳AuthResult
+			//return payload;
+
+			if (result.Item1 == false)
+			{
 				string errorMessage = "帳號或密碼錯誤";
-                string id = "0";
+				string id = "0";
 				List<string> errors = new List<string>();
-                errors.Add(errorMessage);
+				errors.Add(errorMessage);
 				errors.Add(id);
 				return errors;
-            }
-            else 
-            {
+			}
+			else
+			{
 				string sussceMessage = "登入成功";
 				List<string> sussce = new List<string>();
 				var protectId = _dataProtector.Protect(memberId);
@@ -95,7 +113,7 @@ namespace RGB.Back.Controllers
 				sussce.Add(protectId);
 
 				//ProcessLogin(memberId);
-                return sussce;
+				return sussce;
 			}
 		}
 
@@ -333,5 +351,128 @@ namespace RGB.Back.Controllers
 		}
 
 
+		/// <summary>
+		/// 產生JWT Token
+		/// </summary>
+		/// <param name="user">User資料</param>
+		/// <returns>AuthResult</returns>
+		private async Task<AuthResult> GenerateJwtToken(string memberid)
+		{
+			#region 建立JWT Token
+			//宣告JwtSecurityTokenHandler，用來建立token
+			JwtSecurityTokenHandler jwtTokenHandler = new JwtSecurityTokenHandler();
+
+			//appsettings中JwtConfig的Secret值
+			byte[] key = Encoding.ASCII.GetBytes(_jwtConfig.Secret);
+
+			//定義token描述
+			SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
+			{
+				//設定要加入到 JWT Token 中的聲明資訊(Claims)
+				Subject = new ClaimsIdentity(new[]
+				{
+		           new Claim(JwtRegisteredClaimNames.Iss, "RGB"),
+				   new Claim("memberid", memberid)
+				}),
+
+				//設定Token的時效
+				Expires = DateTime.UtcNow.AddSeconds(3600),
+
+				//設定加密方式，key(appsettings中JwtConfig的Secret值)與HMAC SHA256演算法
+				SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+			};
+
+			//使用SecurityTokenDescriptor建立JWT securityToken
+			SecurityToken token = jwtTokenHandler.CreateToken(tokenDescriptor);
+
+
+			//token序列化為字串
+			string jwtToken = jwtTokenHandler.WriteToken(token);
+			#endregion
+
+			//#region 回傳AuthResult
+			return new AuthResult()
+			{
+				Token = jwtToken,
+				Result = true,
+				RefreshToken = RandomString(25) + Guid.NewGuid()
+			};
+			//#endregion
+		}
+
+		public static string RandomString(int length)
+		{
+			const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+			var random = new Random();
+			var result = new StringBuilder(length);
+			for (int i = 0; i < length; i++)
+			{
+				result.Append(chars[random.Next(chars.Length)]);
+			}
+			return result.ToString();
+		}
+
+
+
+
+
+
+		/// <summary>
+		/// 驗證Token，並重新產生Token
+		/// </summary>
+		/// <param name="tokenRequest">TokenRequest參數</param>
+		/// <returns>AuthResult</returns>
+		//private async Task<AuthResult> VerifyAndGenerateToken(TokenRequest tokenRequest)
+		//{
+		//	//建立JwtSecurityTokenHandler
+		//	JwtSecurityTokenHandler jwtTokenHandler = new JwtSecurityTokenHandler();
+
+		//	try
+		//	{
+		//		//驗證參數的Token，回傳SecurityToken
+		//		ClaimsPrincipal tokenInVerification = jwtTokenHandler.ValidateToken(tokenRequest.Token, _tokenValidationParams, out SecurityToken validatedToken);
+
+		//		if (validatedToken is JwtSecurityToken jwtSecurityToken)
+		//		{
+		//			//檢核Token的演算法
+		//			var result = jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha512, StringComparison.InvariantCultureIgnoreCase);
+
+		//			if (result == false)
+		//			{
+		//				return null;
+		//			}
+		//		}
+
+
+		//		//取Token Claims中的Iss(產生token時定義為Account)
+		//		string JwtAccount = tokenInVerification.Claims.SingleOrDefault(x => x.Type == JwtRegisteredClaimNames.Iss).Value;
+
+		//		//檢核storedRefreshToken與JwtAccount的Account是否一致
+		//		if (storedRefreshToken.Account != JwtAccount)
+		//		{
+		//			return new AuthResult()
+		//			{
+		//				Errors = new List<string>() { "Token驗證失敗" },
+		//				Success = false
+		//			};
+		//		}
+
+		//		//依storedRefreshToken的Account，查詢出DB的User資料
+		//		User dbUser = _context.Users.Where(u => u.Account == storedRefreshToken.Account).FirstOrDefault();
+
+		//		//產生Jwt Token
+		//		return await GenerateJwtToken(dbUser);
+		//	}
+		//	catch (Exception ex)
+		//	{
+		//		return new AuthResult()
+		//		{
+		//			Success = false,
+		//			Errors = new List<string>() {
+		//		ex.Message
+		//	}
+		//		};
+		//	}
+		//}
 	}
 }
