@@ -71,6 +71,15 @@ namespace RGB.Back.Controllers
 			return games;
 		}
 
+		[HttpGet("developerName/{developerId}")]
+		public string GetDeveloperName(int developerId)
+		{
+			return _context.Developers.AsNoTracking()
+				.Where(x => x.Id == developerId)
+				.Select(x => x.Name)
+				.FirstOrDefault();
+		}
+
 		// PUT: api/Games/5
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		//[HttpPut("{id}")]
