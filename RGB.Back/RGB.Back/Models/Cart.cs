@@ -11,5 +11,15 @@ public partial class Cart
 
     public int MemberId { get; set; }
 
+    public DateTime CreateAt { get; set; }
+
+    public DateTime UpdateAt { get; set; }
+
+    public int? DiscountId { get; set; }
+
+    public virtual CartItem CartItem { get; set; }
+
+    public virtual Discount IdNavigation { get; set; }
+
     public virtual Member Member { get; set; }
 }

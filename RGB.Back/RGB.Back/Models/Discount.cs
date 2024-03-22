@@ -27,6 +27,8 @@ public partial class Discount
 
     public virtual ICollection<BillDetail> BillDetails { get; set; } = new List<BillDetail>();
 
+    public virtual Cart Cart { get; set; }
+
     public virtual Developer Developer { get; set; }
 
     public virtual ICollection<DiscountItem> DiscountItems { get; set; } = new List<DiscountItem>();

@@ -21,7 +21,7 @@ public partial class Member
 
     public DateTime? BanTime { get; set; }
 
-    public int? Bonus { get; set; }
+    public int Bonus { get; set; }
 
     public DateTime LastLoginDate { get; set; }
 
@@ -29,11 +29,9 @@ public partial class Member
 
     public string NickName { get; set; }
 
-    public bool IsConfirmed { get; set; }
+    public bool? IsConfirmed { get; set; }
 
     public string ConfirmCode { get; set; }
-
-    public string Google { get; set; }
 
     public int? Role { get; set; }
 

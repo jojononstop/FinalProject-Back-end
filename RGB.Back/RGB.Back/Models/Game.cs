@@ -31,6 +31,8 @@ public partial class Game
 
     public virtual ICollection<BillItem> BillItems { get; set; } = new List<BillItem>();
 
+    public virtual CartItem CartItem { get; set; }
+
     public virtual ICollection<Collection> Collections { get; set; } = new List<Collection>();
 
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
