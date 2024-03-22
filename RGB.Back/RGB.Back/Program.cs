@@ -1,4 +1,4 @@
-
+ï»¿
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -11,9 +11,10 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using RGB.Back.Service;
 
+
 namespace RGB.Back
 {
-	public class Program
+    public class Program
 	{
 		public static void Main(string[] args)
 		{
@@ -31,19 +32,19 @@ namespace RGB.Back
 				ValidateIssuer = false,
 				ValidateAudience = false,
 
-				//ÅçÃÒIssuerSigningKey
+				//é©—è­‰IssuerSigningKey
 				ValidateIssuerSigningKey = true,
-				//¥HJwtConfig:Secret¬°Key¡A°µ¬°Jwt¥[±K
+				//ä»¥JwtConfig:Secretç‚ºKeyï¼Œåšç‚ºJwtåŠ å¯†
 				IssuerSigningKey = new SymmetricSecurityKey(key),
 
-				//ÅçÃÒ®É®Ä
+				//é©—è­‰æ™‚æ•ˆ
 				ValidateLifetime = true,
 
-				//³]©wtokenªº¹L´Á®É¶¡¥i¥H¥H¬í¨Ó­pºâ¡A·ítokenªº¹L´Á®É¶¡§C©ó¤­¤ÀÄÁ®É¨Ï¥Î¡C
+				//è¨­å®štokençš„éŽæœŸæ™‚é–“å¯ä»¥ä»¥ç§’ä¾†è¨ˆç®—ï¼Œç•¶tokençš„éŽæœŸæ™‚é–“ä½Žæ–¼äº”åˆ†é˜æ™‚ä½¿ç”¨ã€‚
 				ClockSkew = TimeSpan.Zero
 			};
 
-			//µù¥UtokenValidationParams¡A«áÄò¥i¥Hª`¤J¨Ï¥Î¡C
+			//è¨»å†ŠtokenValidationParamsï¼Œå¾ŒçºŒå¯ä»¥æ³¨å…¥ä½¿ç”¨ã€‚
 			builder.Services.AddSingleton(tokenValidationParams);
 
 			builder.Services.AddAuthentication(options =>
@@ -57,7 +58,7 @@ namespace RGB.Back
 				jwt.SaveToken = true;
 				jwt.TokenValidationParameters = tokenValidationParams;
 			});
-			//¥H¤Wjwt
+			//ä»¥ä¸Šjwt
 			// Add services to the container.
 			builder.Services.AddDbContext<RizzContext>(options =>
 			{
@@ -89,20 +90,20 @@ namespace RGB.Back
 			builder.Services.AddEndpointsApiExplorer();
 			builder.Services.AddSwaggerGen();
 
-			var app = builder.Build();
+            var app = builder.Build();
 
-			// Configure the HTTP request pipeline.
-			if (app.Environment.IsDevelopment())
-			{
-				app.UseSwagger();
-				app.UseSwaggerUI();
-			}
+            // Configure the HTTP request pipeline.
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
 
 			app.UseCors();
 			app.UseHttpsRedirection();
-			//±Ò¥Î¨­¤ÀÃÑ§O
+			//å•Ÿç”¨èº«åˆ†è­˜åˆ¥
 			app.UseAuthentication();
-			//±Ò¥Î±ÂÅv¥\¯à
+			//å•Ÿç”¨æŽˆæ¬ŠåŠŸèƒ½
 			app.UseCors(CorsPolicy);
           
             app.UseHttpsRedirection();
@@ -118,7 +119,7 @@ namespace RGB.Back
 			app.UseAuthorization();
 
 
-			app.MapControllers();
+            app.MapControllers();
 
 			app.Run();
 		}

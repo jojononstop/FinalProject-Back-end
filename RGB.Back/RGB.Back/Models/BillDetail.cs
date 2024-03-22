@@ -11,25 +11,21 @@ public partial class BillDetail
 
     public int MemberId { get; set; }
 
+    public string Sn { get; set; }
+
     public string Name { get; set; }
 
     public string Number { get; set; }
 
     public string Address { get; set; }
 
-    public string Sn { get; set; }
+    public int DiscountId { get; set; }
 
-    public int Amount { get; set; }
+    public int Total { get; set; }
 
     public string ShippingStatus { get; set; }
 
     public string PaymentStatus { get; set; }
-
-    public int? BounsPoint { get; set; }
-
-    public DateTime CreateAt { get; set; }
-
-    public DateTime UpdateAt { get; set; }
 
     public int BounsPoint { get; set; }
 

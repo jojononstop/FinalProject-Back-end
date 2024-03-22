@@ -29,9 +29,11 @@ public partial class Member
 
     public string NickName { get; set; }
 
-    public bool? IsConfirmed { get; set; }
+    public bool IsConfirmed { get; set; }
 
     public string ConfirmCode { get; set; }
+
+    public string Google { get; set; }
 
     public int? Role { get; set; }
 
