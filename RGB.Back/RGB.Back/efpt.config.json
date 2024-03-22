@@ -56,6 +56,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[CartItems]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[Carts]",
          "ObjectType": 0
       },
@@ -109,6 +113,10 @@
       },
       {
          "Name": "[dbo].[Messages]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Payment]",
          "ObjectType": 0
       },
       {

@@ -5,11 +5,9 @@ using System.Collections.Generic;
 
 namespace RGB.Back.Models;
 
-public partial class BillItem
+public partial class CartItem
 {
     public int Id { get; set; }
-
-    public int BillDetailId { get; set; }
 
     public int GameId { get; set; }
 
@@ -17,9 +15,11 @@ public partial class BillItem
 
     public int Qty { get; set; }
 
+    public int CartId { get; set; }
+
     public decimal Price { get; set; }
 
-    public int Total { get; set; }
+    public decimal Total { get; set; }
 
-    public virtual Game Game { get; set; }
+    public string Image { get; set; }
 }
