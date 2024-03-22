@@ -1,39 +1,65 @@
-﻿namespace RGB.Back.DTOs
+﻿using Newtonsoft.Json;
+
+namespace RGB.Back.DTOs
 {
     public class PaymentRequestDto
     {
+        [JsonProperty("amount")]
         public int Amount { get; set; }
+
+        [JsonProperty("currency")]
         public string Currency { get; set; }
+
+        [JsonProperty("orderId")]
         public string OrderId { get; set; }
+
+        [JsonProperty("packages")]
         public List<PackageDto> Packages { get; set; }
+
+        [JsonProperty("redirectUrls")]
         public RedirectUrlsDto RedirectUrls { get; set; }
-        public RequestOptionDto? Options { get; set; }
+        //public RequestOptionDto? Options { get; set; }
     }
     public class PackageDto
     {
+        [JsonProperty("id")]
         public string Id { get; set; }
+
+        [JsonProperty("amount")]
         public int Amount { get; set; }
+
+        [JsonProperty("name")]
         public string Name { get; set; }
+
+        [JsonProperty("products")]
         public List<LinePayProductDto> Products { get; set; }
-        public int? UserFee { get; set; }
+        //public int? UserFee { get; set; }
 
     }
     public class LinePayProductDto
     {
+        [JsonProperty("name")]
         public string Name { get; set; }
+
+        [JsonProperty("quantity")]
         public int Quantity { get; set; }
+
+        [JsonProperty("price")]
         public int Price { get; set; }
-        public string? Id { get; set; }
-        public string? ImageUrl { get; set; }
-        public int? OriginalPrice { get; set; }
+        //public string? Id { get; set; }
+        //public string? ImageUrl { get; set; }
+        //public int? OriginalPrice { get; set; }
     }
 
     public class RedirectUrlsDto
     {
+        [JsonProperty("confirmUrl")]
         public string ConfirmUrl { get; set; }
+
+        [JsonProperty("cancelUrl")]
         public string CancelUrl { get; set; }
-        public string? AppPackageName { get; set; }
-        public string? ConfirmUrlType { get; set; }
+        //public string? AppPackageName { get; set; }
+        //public string? ConfirmUrlType { get; set; }
     }
 
     public class RequestOptionDto

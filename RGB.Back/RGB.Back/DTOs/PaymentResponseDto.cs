@@ -1,41 +1,22 @@
 ﻿namespace RGB.Back.DTOs
 {
-    public class PaymentConfirmResponseDto
+    public class PaymentResponseDto
     {
         public string ReturnCode { get; set; }
         public string ReturnMessage { get; set; }
-        public ConfirmResponseInfoDto Info { get; set; }
+        public ResponseInfoDto Info { get; set; }
     }
 
-    public class ConfirmResponseInfoDto
+    public class ResponseInfoDto
     {
-        public string OrderId { get; set; }
+        public ResponsePaymentUrlDto PaymentUrl { get; set; }
         public long TransactionId { get; set; }
-        public string AuthorizationExpireDate { get; set; }
-        public string RegKey { get; set; }
-        public ConfirmResponsePayInfoDto[] PayInfo { get; set; }
+        public string PaymentAccessToken { get; set; }
     }
 
-    public class ConfirmResponsePayInfoDto
+    public class ResponsePaymentUrlDto
     {
-        public string Method { get; set; }
-        public int Amount { get; set; }
-        public string CreditCardNickname { get; set; }
-        public string CreditCardBrand { get; set; }
-        public string MaskedCreditCardNumber { get; set; }
-        public ConfirmResponsePackageDto[] Packages { get; set; }
-        public ConfirmResponseShippingOptionsDto Shipping { get; set; }
-    }
-    public class ConfirmResponsePackageDto
-    {
-        public string Id { get; set; }
-        public int Amount { get; set; }
-        public int UserFeeAmount { get; set; }
-    }
-    public class ConfirmResponseShippingOptionsDto
-    {
-        public string MethodId { get; set; }
-        public int FeeAmount { get; set; }
-        public ShippingAddressDto Address { get; set; }
+        public string Web { get; set; }
+        public string App { get; set; }
     }
 }
