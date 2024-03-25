@@ -85,8 +85,10 @@ namespace RGB.Back.Controllers
 		public async Task<List<string>> Login(LoginDTO loginDto)
 		{
             var result= _service.ValidLogin(loginDto); // 驗證帳密是否ok,且是有效的會員
-            var memberId = result.Item2.ToString();
-
+            var memberId = result.Item2.Id.ToString();
+			var ava = result.Item2.AvatarUrl;
+			var bouns = result.Item2.Bonus.ToString();
+			var name = result.Item2.NickName;
 			//JwtSecurityTokenHandler jwtTokenHandler = new JwtSecurityTokenHandler();
 			//呼叫GenerateJwtToken方法，建立jwtToken
 			//AuthResult jwtToken = await GenerateJwtToken(memberId);
@@ -102,6 +104,9 @@ namespace RGB.Back.Controllers
 				List<string> errors = new List<string>();
 				errors.Add(errorMessage);
 				errors.Add(id);
+				errors.Add(ava);
+				errors.Add(bouns);
+				errors.Add(name);
 				return errors;
 			}
 			else
@@ -111,6 +116,9 @@ namespace RGB.Back.Controllers
 				var protectId = _dataProtector.Protect(memberId);
 				sussce.Add(sussceMessage);
 				sussce.Add(protectId);
+				sussce.Add(ava);
+				sussce.Add(bouns);
+				sussce.Add(name);
 
 				//ProcessLogin(memberId);
 				return sussce;

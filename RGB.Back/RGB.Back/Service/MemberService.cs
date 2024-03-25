@@ -52,14 +52,21 @@ namespace RGB.Back.Service
 			return memberTagList;
 		}
 
-		public (bool, int) ValidLogin(LoginDTO loginDto)
+		public (bool, MemberDataDTO) ValidLogin(LoginDTO loginDto)
 		{
 
 			// 根據account(帳號)取得 Member
 			var member = _context.Members.FirstOrDefault(p => p.Account == loginDto.Account);
 			if (member == null)
 			{
-				return (false,0);
+				var dto = new MemberDataDTO
+				{
+					Id =0,
+					AvatarUrl=null,
+					Bonus=0,
+					NickName=""
+				};
+				return (false, dto);
 			}
 
 			//// 檢查是否已經確認
@@ -74,13 +81,38 @@ namespace RGB.Back.Service
 
 			if (string.Compare(member.Password, loginDto.Password, true) != 0)
 			{
-				return (false, 0);
+				var dto = new MemberDataDTO
+				{
+					Id = 0,
+					AvatarUrl = null,
+					Bonus = 0,
+					NickName = ""
+				};
+				return (false, dto);
 			}
 			else 
 			{
 				member.LastLoginDate=DateTime.Now;
 				_context.SaveChanges();
-				return (true, member.Id);
+				
+				var Avatar = "";
+				if (member.AvatarUrl==null)
+				{
+					//預設頭像
+					Avatar = "";
+				}
+				else
+				{
+					Avatar = member.AvatarUrl,
+				}
+				var dto = new MemberDataDTO
+				{
+					Id = member.Id,
+					AvatarUrl = Avatar,
+					Bonus = member.Bonus,
+					NickName = member.NickName
+				};
+				return (true, dto);
 			}
 		}
 

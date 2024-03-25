@@ -31,11 +31,11 @@ namespace RGB.Back.Service
 			return collectionList;
 		}
 
-		public void UpdateCollectionTags(CollectionDTO dto)
+		public void UpdateCollectionTags(int Id,int memberTagId)
 		{
-			Collection model = _context.Collections.Find(dto.Id);
+			Collection model = _context.Collections.Find(Id);
 
-			model.MemberTagId = dto.MemberTagId;
+			model.MemberTagId = memberTagId;
 
 			_context.SaveChanges();
 		}
