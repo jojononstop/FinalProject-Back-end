@@ -48,8 +48,9 @@ namespace RGB.Back.Controllers
 		}
 
 		// POST: api/Games/FilterByTags
+		//public async Task<IEnumerable<GameDetailDTO>> FilterGamesByTags([FromBody] List<int> tagIds)
 		[HttpPost("FilterByTags")]
-		public async Task<IEnumerable<GameDetailDTO>> FilterGamesByTags([FromBody] List<int> tagIds)
+		public async Task<IEnumerable<GameDetailDTO>> FilterGamesByTags(List<int> tagIds)
 		{
 			var games = _service.GetGameDetailByTags(tagIds);
 			return games;

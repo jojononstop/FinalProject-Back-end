@@ -67,12 +67,10 @@ namespace RGB.Back.Controllers
         // POST: api/Comments
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<Comment> PostComment(Comment comment)
+        public async Task PostComment(Comment comment)
         {
             _context.Comments.Add(comment);
             await _context.SaveChangesAsync();
-
-            return comment;
         }
 
         // DELETE: api/Comments/5
@@ -117,22 +115,42 @@ namespace RGB.Back.Controllers
 			await _context.SaveChangesAsync();
 
 			return attachedComment;
+        }
+
+        // DELETE: api/AttachedComments
+        [HttpDelete("attachedComment/{attachedCommentId}")]
+        public async Task<string> DeleteAttachedComment(int attachedCommentId)
+        {
+            var attachedComment = await _context.AttachedComments.FindAsync(attachedCommentId);
+            if (attachedComment == null)
+            {
+                return "刪除失敗";
+            }
+
+            _context.AttachedComments.Remove(attachedComment);
+            await _context.SaveChangesAsync();
+
+            return "刪除成功";
+        }
+
+        [HttpGet("memberAvatar/{memberId}")]
+        public async Task<string> GetMemberAvatar(int memberId)
+		{
+			return _context.Members.Where(m => m.Id == memberId).Select(m => m.AvatarUrl).FirstOrDefault();
 		}
 
-		// DELETE: api/AttachedComments
-		[HttpDelete("attachedComment/{attachedCommentId}")]
-		public async Task<string> DeleteAttachedComment(int attachedCommentId)
+		[HttpGet("memberName/{memberId}")]
+		public async Task<string> GetMemberName(int memberId)
 		{
-			var attachedComment = await _context.AttachedComments.FindAsync(attachedCommentId);
-			if (attachedComment == null)
+            var nickName = _context.Members.Where(m => m.Id == memberId).Select(m => m.NickName).FirstOrDefault();
+            if(nickName != null)
+            {
+				return nickName;
+            }
+            else
 			{
-				return "刪除失敗";
+				return _context.Members.Where(m => m.Id == memberId).Select(m => m.Account).FirstOrDefault();
 			}
-
-			_context.AttachedComments.Remove(attachedComment);
-			await _context.SaveChangesAsync();
-
-			return "刪除成功";
 		}
 
 		private bool CommentExists(int id)
