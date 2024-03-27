@@ -115,7 +115,7 @@ namespace RGB.Back.Controllers
 				sussce.Add(ava);
 				sussce.Add(bouns);
 				sussce.Add(name);
-
+				sussce.Add(memberId);
 				//ProcessLogin(memberId);
 				return sussce;
 			}
