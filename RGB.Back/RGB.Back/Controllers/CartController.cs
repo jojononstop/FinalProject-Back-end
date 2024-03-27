@@ -26,7 +26,6 @@ namespace RGB.Back.Controllers
             {
                 public int GameId { get; set; } // 遊戲 ID
 
-                public string GameName { get; set; } // 遊戲名稱
 
                 public int Quantity { get; set; } = 1; // 數量，默认為 1
 
