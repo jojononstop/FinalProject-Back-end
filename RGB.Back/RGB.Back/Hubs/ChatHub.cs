@@ -20,11 +20,17 @@ namespace RGB.Back.Hubs
         //客戶端連接服務端時
         public override async Task OnConnectedAsync()
         {
+            var httpContext = Context.GetHttpContext();
+            var userId = httpContext.Request.Cookies["accountId"];
+
             var id = Context.ConnectionId;
             _logger.LogInformation($"客戶端id={id},連接服務端");
 
             // 取得上線的使用者
-            var onlineUser = new UserInfoDto { ConnectionId = id }; // 假設 UserInfoDto 有一個 ConnectionId 屬性表示連接ID
+            var onlineUser = new UserInfoDto 
+            {
+                ConnectionId = id 
+            }; // 假設 UserInfoDto 有一個 ConnectionId 屬性表示連接ID
             OnlineUsers.Add(onlineUser);
 
             // 更新其他使用者的上線資訊
@@ -51,8 +57,16 @@ namespace RGB.Back.Hubs
 
         public async Task SendMessage(string message)
         {
-            await Clients.All.SendMessage(_service.SendMessage(message));
             await Clients.Caller.SendMessageTo(_service.SendCaller(message));
         }
+
+        public async Task SendMessageToFriend(int senderId, int receiveId, string friendConnectionId ,string message)
+        {
+            await Clients.Clients(friendConnectionId).SendMessageTo(_service.SendMessageToFriend(senderId, receiveId, message));
+            await Clients.Caller.SendMessageTo(_service.SendMessageToFriend(senderId, receiveId, message));
+        }
+
+
+
     }
 }

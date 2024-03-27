@@ -28,10 +28,10 @@ namespace RGB.Back.Controllers
         }
 
         [HttpGet("GetUserFriends", Name = "GetUserFriends")]
-        public IActionResult GetUserFriends(int id)
+        public async Task<List<UserInfoDto>> GetUserFriends(int id)
         {
-            var friends = _service.GetAllFriends(id);
-            return Ok(friends);
+            var friends =  _service.GetAllFriends(id);
+            return friends;
         }
 
         [HttpGet("SendMessageTo", Name = "SendMessageTo")]
@@ -40,5 +40,12 @@ namespace RGB.Back.Controllers
             await hubContext.Clients.Client(connectionId).SendMessageTo(data);
             return Ok("Send Successful!");
         }
+        [HttpGet("GetMessageHistory", Name = "GetMessageHistory")]
+        public List<ChatMessageDto> GetMessageHistory(int memberId, int friendId)
+        {
+            var messages = _service.GetMessageHistory(memberId, friendId);
+            return messages;
+        }
+
     }
 }
