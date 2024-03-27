@@ -26,6 +26,7 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using Google.Apis.Auth.OAuth2.Requests;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 
 
@@ -100,13 +101,8 @@ namespace RGB.Back.Controllers
 			if (result.Item1 == false)
 			{
 				string errorMessage = "帳號或密碼錯誤";
-				string id = "0";
 				List<string> errors = new List<string>();
 				errors.Add(errorMessage);
-				errors.Add(id);
-				errors.Add(ava);
-				errors.Add(bouns);
-				errors.Add(name);
 				return errors;
 			}
 			else
@@ -235,18 +231,31 @@ namespace RGB.Back.Controllers
 			if (member == null) {
 				List<string> errors = new List<string>();
 				errors.Add("新的google帳號");
-				errors.Add("0");
 				return errors;
-			} 
+			}
+			//var memberId = result.Item2.Id.ToString();
+			//var ava = result.Item2.AvatarUrl;
+			//var bouns = result.Item2.Bonus.ToString();
+			//var name = result.Item2.NickName;
 			else
 			{
 			    var memberId = member.Id.ToString();
-
+				var ava = member.AvatarUrl;
+				var bouns = member.Bonus.ToString();
+				var name = member.NickName;
+				if (ava == null)
+				{
+					//預設頭像
+					ava = "";
+				}
 				string sussceMessage = "登入成功";
 				List<string> sussces = new List<string>();
 				var protectId = _dataProtector.Protect(memberId);
 				sussces.Add(sussceMessage);
 				sussces.Add(protectId);
+				sussces.Add(ava);
+				sussces.Add(bouns);
+				sussces.Add(name);
 				return sussces;
 			}
 		}

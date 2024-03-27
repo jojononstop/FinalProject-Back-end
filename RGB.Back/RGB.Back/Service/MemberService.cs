@@ -103,7 +103,7 @@ namespace RGB.Back.Service
 				}
 				else
 				{
-					Avatar = member.AvatarUrl,
+					Avatar = member.AvatarUrl;
 				}
 				var dto = new MemberDataDTO
 				{
@@ -136,22 +136,24 @@ namespace RGB.Back.Service
 			{
 				return "帳號已經存在";
 			}
+
 			var confirmCode = Guid.NewGuid().ToString("N");
 			Member member = new Member()
 			{
 				Account = cmDto.Account,
 				//待加密
 				Password = cmDto.Password,
-				Mail = cmDto.Mail,
+				Mail = cmDto.Email,
 				AvatarUrl = null,
 				RegistrationDate = DateTime.Now,
 				BanTime = null,
 				Bonus = 0,
 				LastLoginDate = DateTime.Now,
 				Birthday = null,
+				NickName = cmDto.Name,
 				IsConfirmed = false,
 				ConfirmCode = confirmCode,
-				Google = null,
+				Google = cmDto.Google,
 				Role = null
 			};
 			_context.Members.Add(member);
@@ -166,12 +168,12 @@ namespace RGB.Back.Service
 			//string name = vm.Name;
 			//string email = vm.EMail;
 			//前台網站
-			var url = "";
-			string name = cmDto.Account; // 請確認您的 CreateMemberDTO 類中是否包含了名稱（Name）和電子郵件（EMail）屬性
-			string email = cmDto.Mail;
-			new EMailHelper().SendConfirmRegisterEmail(url, name, email);
+			//var url = "";
+			//string name = cmDto.Account; // 請確認您的 CreateMemberDTO 類中是否包含了名稱（Name）和電子郵件（EMail）屬性
+			//string email = cmDto.Email;
+			//new EMailHelper().SendConfirmRegisterEmail(url, name, email);
 
-			return "註冊完成";
+			return "註冊成功";
 		}
 
 		//發送驗證信
