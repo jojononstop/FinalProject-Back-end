@@ -52,14 +52,21 @@ namespace RGB.Back.Service
 			return memberTagList;
 		}
 
-		public (bool, int) ValidLogin(LoginDTO loginDto)
+		public (bool, MemberDataDTO) ValidLogin(LoginDTO loginDto)
 		{
 
 			// 根據account(帳號)取得 Member
 			var member = _context.Members.FirstOrDefault(p => p.Account == loginDto.Account);
 			if (member == null)
 			{
-				return (false,0);
+				var dto = new MemberDataDTO
+				{
+					Id =0,
+					AvatarUrl=null,
+					Bonus=0,
+					NickName=""
+				};
+				return (false, dto);
 			}
 
 			//// 檢查是否已經確認
@@ -74,13 +81,38 @@ namespace RGB.Back.Service
 
 			if (string.Compare(member.Password, loginDto.Password, true) != 0)
 			{
-				return (false, 0);
+				var dto = new MemberDataDTO
+				{
+					Id = 0,
+					AvatarUrl = null,
+					Bonus = 0,
+					NickName = ""
+				};
+				return (false, dto);
 			}
 			else 
 			{
 				member.LastLoginDate=DateTime.Now;
 				_context.SaveChanges();
-				return (true, member.Id);
+				
+				var Avatar = "";
+				if (member.AvatarUrl==null)
+				{
+					//預設頭像
+					Avatar = "";
+				}
+				else
+				{
+					Avatar = member.AvatarUrl;
+				}
+				var dto = new MemberDataDTO
+				{
+					Id = member.Id,
+					AvatarUrl = Avatar,
+					Bonus = member.Bonus,
+					NickName = member.NickName
+				};
+				return (true, dto);
 			}
 		}
 
@@ -104,22 +136,24 @@ namespace RGB.Back.Service
 			{
 				return "帳號已經存在";
 			}
+
 			var confirmCode = Guid.NewGuid().ToString("N");
 			Member member = new Member()
 			{
 				Account = cmDto.Account,
 				//待加密
 				Password = cmDto.Password,
-				Mail = cmDto.Mail,
+				Mail = cmDto.Email,
 				AvatarUrl = null,
 				RegistrationDate = DateTime.Now,
 				BanTime = null,
 				Bonus = 0,
 				LastLoginDate = DateTime.Now,
 				Birthday = null,
+				NickName = cmDto.Name,
 				IsConfirmed = false,
 				ConfirmCode = confirmCode,
-				Google = null,
+				Google = cmDto.Google,
 				Role = null
 			};
 			_context.Members.Add(member);
@@ -134,12 +168,12 @@ namespace RGB.Back.Service
 			//string name = vm.Name;
 			//string email = vm.EMail;
 			//前台網站
-			var url = "";
-			string name = cmDto.Account; // 請確認您的 CreateMemberDTO 類中是否包含了名稱（Name）和電子郵件（EMail）屬性
-			string email = cmDto.Mail;
-			new EMailHelper().SendConfirmRegisterEmail(url, name, email);
+			//var url = "";
+			//string name = cmDto.Account; // 請確認您的 CreateMemberDTO 類中是否包含了名稱（Name）和電子郵件（EMail）屬性
+			//string email = cmDto.Email;
+			//new EMailHelper().SendConfirmRegisterEmail(url, name, email);
 
-			return "註冊完成";
+			return "註冊成功";
 		}
 
 		//發送驗證信
