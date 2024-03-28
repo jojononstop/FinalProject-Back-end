@@ -60,26 +60,6 @@ namespace RGB.Back.Controllers
 			_dataProtector = dataProtectionProvider.CreateProtector("SamplePurpose");
 		}
 
-		// GET: api/Members
-		//[HttpGet]
-		//public async Task<ActionResult<IEnumerable<Member>>> GetMembers()
-		//{
-		//    return await _context.Members.ToListAsync();
-		//}
-
-		//// GET: api/Members/5
-		//[HttpGet("{id}")]
-		//public async Task<Member> GetMember(int id)
-		//{
-		//    var member = await _context.Members.FindAsync(id);
-
-		//    //if (member == null)
-		//    //{
-		//    //    return NotFound();
-		//    //}
-
-		//    return member;
-		//}
         [HttpPost("Login")]
 		//LoginDTO loginDto
 		//JwtPayload
@@ -127,6 +107,37 @@ namespace RGB.Back.Controllers
 			var Id = _dataProtector.Unprotect(protectId);
 			return Id;
 		}
+
+		[HttpPost("TestMemberAccount")]
+		public async Task<bool> TestMemberAccount(string account)
+		{
+			var member = _context.Members.FirstOrDefault(p => p.Account == account);
+			if(member == null)
+			{
+			   return true;
+			}
+			else
+			{
+				return false;
+			}
+
+		}
+
+		[HttpPost("TestMemberName")]
+		public async Task<bool> TestMemberName(string name)
+		{
+			var member = _context.Members.FirstOrDefault(p => p.NickName == name);
+			if (member == null)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+
 
 
 		[HttpPost("2")]
