@@ -28,7 +28,8 @@ namespace RGB.Back.Controllers
 		[HttpGet]
 		public async Task<IEnumerable<GameDetailDTO>> GetGames()
 		{
-			return _service.GetAllGameDetail();
+			var games = _service.GetAllGameDetail();
+			return games;
 		}
 
 		// GET: api/Games/5

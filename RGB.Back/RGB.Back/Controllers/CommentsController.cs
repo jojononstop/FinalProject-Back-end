@@ -67,11 +67,13 @@ namespace RGB.Back.Controllers
         // POST: api/Comments
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task PostComment(Comment comment)
+        public async Task<int> PostComment(Comment comment)
         {
             _context.Comments.Add(comment);
             await _context.SaveChangesAsync();
-        }
+
+			return comment.Id;
+		}
 
         // DELETE: api/Comments/5
         [HttpDelete("{id}")]

@@ -190,7 +190,7 @@ namespace RGB.Back.Service
 					totalDiscountPercent = (double)game.MaxPercent / 100.0;
 				}
 
-				double dPrice = game.Price * totalDiscountPercent;
+				double? dPrice = game.Price * totalDiscountPercent;
 				return ((int)dPrice, (int)(totalDiscountPercent * 100.0));
 			}
 			else
