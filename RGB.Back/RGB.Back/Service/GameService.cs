@@ -54,7 +54,7 @@ namespace RGB.Back.Service
 			gameDto.Id = game.Id;
 			gameDto.Name = game.Name;
 			gameDto.Introduction = game.Introduction;
-			gameDto.Price = game.Price;
+			gameDto.Price = (int)game.Price;
 			gameDto.ReleaseDate = new DateTime(game.ReleaseDate.Year, game.ReleaseDate.Month, game.ReleaseDate.Day);
 			gameDto.Cover = game.Cover;
 			//gameDto.MaxPercent = game.MaxPercent;
@@ -123,7 +123,7 @@ namespace RGB.Back.Service
 				dlcDto.Id = dlc.Id;
 				dlcDto.Name = dlc.Name;
 				dlcDto.Introduction = dlc.Introduction;
-				dlcDto.Price = dlc.Price;
+				dlcDto.Price = (int)dlc.Price;
 				dlcDto.ReleaseDate = new DateTime(dlc.ReleaseDate.Year, dlc.ReleaseDate.Month, dlc.ReleaseDate.Day);
 				dlcDto.Cover = dlc.Cover;
 				//dlcDto.MaxPercent = dlc.MaxPercent;
@@ -190,7 +190,7 @@ namespace RGB.Back.Service
 					totalDiscountPercent = (double)game.MaxPercent / 100.0;
 				}
 
-				double dPrice = game.Price * totalDiscountPercent;
+				double dPrice = (double)(game.Price * totalDiscountPercent);
 				return ((int)dPrice, (int)(totalDiscountPercent * 100.0));
 			}
 			else
@@ -309,7 +309,7 @@ namespace RGB.Back.Service
 				gameDto.Id = game.Id;
 				gameDto.Name = game.Name;
 				gameDto.Introduction = game.Introduction;
-				gameDto.Price = game.Price;
+				gameDto.Price = (int)game.Price;
 				gameDto.ReleaseDate = new DateTime(game.ReleaseDate.Year, game.ReleaseDate.Month, game.ReleaseDate.Day);
 				gameDto.Cover = game.Cover;
 				//gameDto.MaxPercent = game.MaxPercent;

@@ -51,6 +51,8 @@ public partial class RizzContext : DbContext
 
     public virtual DbSet<Dlc> Dlcs { get; set; }
 
+    public virtual DbSet<EcpayOrder> EcpayOrders { get; set; }
+
     public virtual DbSet<Friend> Friends { get; set; }
 
     public virtual DbSet<Game> Games { get; set; }
@@ -69,11 +71,15 @@ public partial class RizzContext : DbContext
 
     public virtual DbSet<Order> Orders { get; set; }
 
-    public virtual DbSet<Payment> Payments { get; set; }
-
     public virtual DbSet<Picture> Pictures { get; set; }
 
     public virtual DbSet<Tag> Tags { get; set; }
+
+    public virtual DbSet<TransferMethod> TransferMethods { get; set; }
+
+    public virtual DbSet<TransferPayment> TransferPayments { get; set; }
+
+    public virtual DbSet<TransferRefund> TransferRefunds { get; set; }
 
     public virtual DbSet<WishListe> WishListes { get; set; }
 
@@ -269,9 +275,7 @@ public partial class RizzContext : DbContext
             entity.Property(e => e.Message)
                 .IsRequired()
                 .HasMaxLength(500);
-            entity.Property(e => e.PaymentMethod)
-                .IsRequired()
-                .HasMaxLength(500);
+            entity.Property(e => e.PaymentMethod).HasMaxLength(500);
 
             entity.HasOne(d => d.Member).WithMany(p => p.Carts)
                 .HasForeignKey(d => d.MemberId)
@@ -410,6 +414,22 @@ public partial class RizzContext : DbContext
                 .HasForeignKey(d => d.MainGameId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_DLCs_Games1");
+        });
+
+        modelBuilder.Entity<EcpayOrder>(entity =>
+        {
+            entity.HasKey(e => e.MerchantTradeNo);
+
+            entity.Property(e => e.MerchantTradeNo).HasMaxLength(50);
+            entity.Property(e => e.MemberId)
+                .HasMaxLength(50)
+                .HasColumnName("MemberID");
+            entity.Property(e => e.PaymentDate).HasColumnType("datetime");
+            entity.Property(e => e.PaymentType).HasMaxLength(50);
+            entity.Property(e => e.PaymentTypeChargeFee).HasMaxLength(50);
+            entity.Property(e => e.RtnMsg).HasMaxLength(50);
+            entity.Property(e => e.TradeDate).HasMaxLength(50);
+            entity.Property(e => e.TradeNo).HasMaxLength(50);
         });
 
         modelBuilder.Entity<Friend>(entity =>
@@ -561,30 +581,6 @@ public partial class RizzContext : DbContext
                 .HasMaxLength(500);
         });
 
-        modelBuilder.Entity<Payment>(entity =>
-        {
-            entity.ToTable("Payment");
-
-            entity.Property(e => e.Id)
-                .ValueGeneratedNever()
-                .HasColumnName("id");
-            entity.Property(e => e.CreateAt).HasColumnType("datetime");
-            entity.Property(e => e.GameId).ValueGeneratedOnAdd();
-            entity.Property(e => e.IsSuccess).HasColumnName("isSuccess");
-            entity.Property(e => e.Message)
-                .IsRequired()
-                .HasColumnType("ntext")
-                .HasColumnName("message");
-            entity.Property(e => e.PaidAt)
-                .HasColumnType("datetime")
-                .HasColumnName("paidAt");
-            entity.Property(e => e.PaymentMethod)
-                .IsRequired()
-                .HasMaxLength(500)
-                .HasColumnName("payment_method");
-            entity.Property(e => e.UpdateAt).HasColumnType("datetime");
-        });
-
         modelBuilder.Entity<Picture>(entity =>
         {
             entity.Property(e => e.Image)
@@ -613,6 +609,44 @@ public partial class RizzContext : DbContext
                 .IsRequired()
                 .HasMaxLength(50)
                 .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<TransferMethod>(entity =>
+        {
+            entity.Property(e => e.PaymentMethod)
+                .IsRequired()
+                .HasMaxLength(500);
+        });
+
+        modelBuilder.Entity<TransferPayment>(entity =>
+        {
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Info)
+                .IsRequired()
+                .HasMaxLength(1000)
+                .HasColumnName("info");
+            entity.Property(e => e.PaymentAmount).HasColumnType("decimal(18, 0)");
+
+            entity.HasOne(d => d.IdNavigation).WithOne(p => p.TransferPayment)
+                .HasForeignKey<TransferPayment>(d => d.Id)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TransferPayments_TransferMethods");
+        });
+
+        modelBuilder.Entity<TransferRefund>(entity =>
+        {
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.RefundAmount).HasColumnType("decimal(18, 0)");
+
+            entity.HasOne(d => d.IdNavigation).WithOne(p => p.TransferRefund)
+                .HasForeignKey<TransferRefund>(d => d.Id)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TransferRefunds_TransferMethods");
+
+            entity.HasOne(d => d.Id1).WithOne(p => p.TransferRefund)
+                .HasForeignKey<TransferRefund>(d => d.Id)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TransferRefunds_TransferPayments");
         });
 
         modelBuilder.Entity<WishListe>(entity =>

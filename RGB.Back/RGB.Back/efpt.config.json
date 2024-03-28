@@ -91,6 +91,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[EcpayOrders]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[Friends]",
          "ObjectType": 0
       },
@@ -127,15 +131,23 @@
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[Payment]",
-         "ObjectType": 0
-      },
-      {
          "Name": "[dbo].[Pictures]",
          "ObjectType": 0
       },
       {
          "Name": "[dbo].[Tags]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[TransferMethods]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[TransferPayments]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[TransferRefunds]",
          "ObjectType": 0
       },
       {

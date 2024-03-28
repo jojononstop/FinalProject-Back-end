@@ -23,11 +23,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
+    <EditorConfigFiles Remove="D:\RGB BACK\RGB.Back\RGB.Back\.editorconfig" />
   </ItemGroup>
 
   <ItemGroup>
-    <EditorConfigFiles Remove="D:\RGB BACK\RGB.Back\RGB.Back\.editorconfig" />
+    <Folder Include="Models\" />
   </ItemGroup>
 
 </Project>
