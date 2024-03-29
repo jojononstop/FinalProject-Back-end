@@ -2,7 +2,6 @@
    "CodeGenerationMode": 4,
    "ContextClassName": "RizzContext",
    "ContextNamespace": null,
-   "DefaultDacpacSchema": null,
    "FilterSchemas": false,
    "IncludeConnectionString": false,
    "ModelNamespace": null,
@@ -64,6 +63,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[ChatMessages]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[Collections]",
          "ObjectType": 0
       },
@@ -85,6 +88,10 @@
       },
       {
          "Name": "[dbo].[DLCs]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EcpayOrders]",
          "ObjectType": 0
       },
       {
@@ -116,7 +123,11 @@
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[Payment]",
+         "Name": "[dbo].[OderDetails]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Orders]",
          "ObjectType": 0
       },
       {
@@ -128,11 +139,23 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[TransferMethods]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[TransferPayments]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[TransferRefunds]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[WishListes]",
          "ObjectType": 0
       }
    ],
-   "UiHint": "sparkle\\sql2024.Rizz.dbo",
+   "UiHint": null,
    "UncountableWords": null,
    "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": false,

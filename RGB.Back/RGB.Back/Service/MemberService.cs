@@ -7,15 +7,19 @@ using RGB.Back.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using System;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace RGB.Back.Service
 {
 	public class MemberService
 	{
 		private readonly RizzContext _context;
+		private readonly RSAEncryptor _rsaService;
 		public MemberService(RizzContext context)
 		{
 			_context = context;
+			_rsaService = new RSAEncryptor("private_key.xml", "public_key.xml");
 		}
 
 		public MemberDTO GetMemberDetailByMemberId(int memberId)
@@ -78,8 +82,9 @@ namespace RGB.Back.Service
 			//// 將vm裡的密碼先雜湊之後,再與db裡的密碼比對
 			//var salt = HashUtility.GetSalt();
 			//var hashedPassword = HashUtility.ToSHA256(loginDto.Password, salt);
-
-			if (string.Compare(member.Password, loginDto.Password, true) != 0)
+			//解密
+			var unencryptedpassword = _rsaService.Decrypt(member.Password);
+			if (string.Compare(unencryptedpassword, loginDto.Password, true) != 0)
 			{
 				var dto = new MemberDataDTO
 				{
@@ -136,13 +141,14 @@ namespace RGB.Back.Service
 			{
 				return "帳號已經存在";
 			}
-
+			//加密
+			var encryptedpassword = _rsaService.Encrypt(cmDto.Password);
 			var confirmCode = Guid.NewGuid().ToString("N");
 			Member member = new Member()
 			{
 				Account = cmDto.Account,
 				//待加密
-				Password = cmDto.Password,
+				Password = encryptedpassword,
 				Mail = cmDto.Email,
 				AvatarUrl = null,
 				RegistrationDate = DateTime.Now,
@@ -203,5 +209,72 @@ namespace RGB.Back.Service
 
 			return true;
 		}
+
+		//public string test (string word)
+		//{
+			
+		//	return _rsaService.Encrypt(word);
+		//}
+
+		//public string test2(string word)
+		//{
+
+		//	return _rsaService.Decrypt(word);
+		//}
+
+
+		//public string Encrypt(string password)
+		//{
+		//	// 加载密钥对
+		//	RSAParameters publicKey;
+		//	RSAParameters privateKey;
+		//	RSAEncryptor.LoadKeyPair("publicKey.txt", "privateKey.txt", out publicKey, out privateKey);
+
+		//	// 加密数据
+		//	byte[] encryptedData = RSAEncryptor.Encrypt(Encoding.UTF8.GetBytes(password), publicKey);
+
+		//	// 返回加密后的数据
+		//	return Convert.ToBase64String(encryptedData);
+		//}
+
+		//public string Decrypt(string encryptedpassword)
+		//{
+		//	// 加载密钥对
+		//	RSAParameters publicKey;
+		//	RSAParameters privateKey;
+		//	RSAEncryptor.LoadKeyPair("publicKey.txt", "privateKey.txt", out publicKey, out privateKey);
+
+		//	// 解密数据
+		//	byte[] decryptedData = RSAEncryptor.Decrypt(Convert.FromBase64String(encryptedpassword), privateKey);
+
+		//	// 返回解密后的数据
+		//	return Encoding.UTF8.GetString(decryptedData);
+		//}
+
+		//public void test()
+		//{
+		//	var rsaService = _rsaService;
+
+		//	// 获取公钥
+		//	string publicKey = rsaService.GetPublicKey();
+		//	Console.WriteLine("Public Key:");
+		//	Console.WriteLine(publicKey);
+
+		//	// 加密示例
+		//	string plainText = "Hello, world!";
+		//	string encryptedText = rsaService.Encrypt(plainText);
+		//	Console.WriteLine("Encrypted Text:");
+		//	Console.WriteLine(encryptedText);
+
+		//	// 解密示例
+		//	string decryptedText = rsaService.Decrypt(encryptedText);
+		//	Console.WriteLine("Decrypted Text:");
+		//	Console.WriteLine(decryptedText);
+
+		//	// 保存密钥示例
+		//	rsaService.SavePrivateKeyToFile("private_key.xml");
+		//	rsaService.SavePublicKeyToFile("public_key.xml");
+
+		//}
 	}
 }

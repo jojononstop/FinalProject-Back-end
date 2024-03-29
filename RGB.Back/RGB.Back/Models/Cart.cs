@@ -11,5 +11,17 @@ public partial class Cart
 
     public int MemberId { get; set; }
 
+    public string MemberName { get; set; }
+
+    public string PaymentMethod { get; set; }
+
+    public int? DiscountAmount { get; set; }
+
+    public int TotalAmount { get; set; }
+
+    public string Message { get; set; }
+
+    public virtual CartItem CartItem { get; set; }
+
     public virtual Member Member { get; set; }
 }
