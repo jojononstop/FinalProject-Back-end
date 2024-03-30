@@ -55,10 +55,10 @@ namespace RGB.Back.Controllers
 		public async Task<List<string>> Login(LoginDTO loginDto)
 		{
             var result= _service.ValidLogin(loginDto); // 驗證帳密是否ok,且是有效的會員
-            var memberId = result.Item2.Id.ToString();
-			var ava = result.Item2.AvatarUrl;
-			var bouns = result.Item2.Bonus.ToString();
-			var name = result.Item2.NickName;
+            var memberId = result.Item3.Id.ToString();
+			var ava = result.Item3.AvatarUrl;
+			var bouns = result.Item3.Bonus.ToString();
+			var name = result.Item3.NickName;
 			//JwtSecurityTokenHandler jwtTokenHandler = new JwtSecurityTokenHandler();
 			//呼叫GenerateJwtToken方法，建立jwtToken
 			//AuthResult jwtToken = await GenerateJwtToken(memberId);
@@ -67,12 +67,22 @@ namespace RGB.Back.Controllers
 			//回傳AuthResult
 			//return payload;
 
-			if (result.Item1 == false)
+			if (result.Item1 == false )
 			{
-				string errorMessage = "帳號或密碼錯誤";
-				List<string> errors = new List<string>();
-				errors.Add(errorMessage);
-				return errors;
+				if(result.Item2 == 0)
+				{
+					string errorMessage = "帳號或密碼錯誤";
+					List<string> errors = new List<string>();
+					errors.Add(errorMessage);
+					return errors;
+				}
+				else
+				{
+					string errorMessage = "您尚未開通會員資格, 請先收確認信, 並點選信裡的連結, 完成認證, 才能登入本網站";
+					List<string> errors = new List<string>();
+					errors.Add(errorMessage);
+					return errors;
+				}
 			}
 			else
 			{
@@ -264,16 +274,19 @@ namespace RGB.Back.Controllers
 
 		//確認郵箱
 		[HttpPost("ActiveRegister")]
-		public async Task<string> ActiveRegister(int id, string confirmCode)
+		public async Task<int> ActiveRegister(ActiveDTO dto)
 		{
-			var result = _service.ActiveRegister(id, confirmCode);
+			var result = _service.ActiveRegister(Convert.ToInt32(dto.Id), dto.confirmCode);
+			
 			if (result == false)
 			{
-				return "驗證失敗";
+				//驗證失敗
+				return 0;
 			}
 			else
 			{
-				return "已通過驗證";
+				//已通過驗證
+				return 1;
 			}
 		}
 
@@ -339,27 +352,27 @@ namespace RGB.Back.Controllers
 			return result.ToString();
 		}
 
-		//[HttpGet("en")]
-		//public async Task<string> test(string word)
-		//{
-			
-
-
-		//	return _service.test(word); 
-			
-
-		//}
-
-		//[HttpGet("un")]
-		//public async Task<string> test2(string word)
-		//{
+		[HttpGet("en")]
+		public async Task<string> test(string word)
+		{
 
 
 
-		//	return _service.test2(word);
+			return _service.test(word);
 
 
-		//}
+		}
+
+		[HttpGet("un")]
+		public async Task<string> test2(string word)
+		{
+
+
+
+			return _service.test2(word);
+
+
+		}
 
 
 
