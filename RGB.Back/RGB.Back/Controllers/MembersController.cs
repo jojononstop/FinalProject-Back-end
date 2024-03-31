@@ -78,7 +78,8 @@ namespace RGB.Back.Controllers
 				}
 				else
 				{
-					string errorMessage = "您尚未開通會員資格, 請先收確認信, 並點選信裡的連結, 完成認證, 才能登入本網站";
+					//您尚未開通會員資格, 請先收確認信, 並點選信裡的連結, 完成認證, 才能登入本網站
+					string errorMessage = "您尚未完成認證";
 					List<string> errors = new List<string>();
 					errors.Add(errorMessage);
 					return errors;
