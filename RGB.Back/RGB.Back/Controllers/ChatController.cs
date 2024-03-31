@@ -21,11 +21,6 @@ namespace RGB.Back.Controllers
             _service = chatService;
         }
 
-        [HttpGet("GetAllUsersIds", Name = "GetAllUserIds")]
-        public List<UserInfoDto> GetAllUserIds()
-        {
-            return ChatHub.OnlineUsers;
-        }
 
         [HttpGet("GetUserFriends", Name = "GetUserFriends")]
         public async Task<List<UserInfoDto>> GetUserFriends(int id)

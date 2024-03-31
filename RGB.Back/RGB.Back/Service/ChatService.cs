@@ -52,9 +52,18 @@ namespace RGB.Back.Service
             return "傳送訊息" + data;
         }
 
-        internal object SendCaller(object data)
+        internal object SendCaller(int senderId, int receiveId, string data)
         {
-            return "已傳送" + data;
+            var messageDto = new ChatMessageDto
+            {
+             
+                sender_id = senderId,
+                receiver_id = receiveId,
+                Message = data,
+                SendTime = DateTime.Now,
+                isRead = 1
+            };
+            return messageDto;
         }
 
         internal object SendMessageToFriend(int senderId, int receiveId, string data)
@@ -71,7 +80,16 @@ namespace RGB.Back.Service
             _context.ChatMessages.Add(message);
             _context.SaveChanges();
 
-            return message;
+            var messageDto = new ChatMessageDto
+            {
+                Id = message.Id,
+                sender_id = message.SenderId,
+                receiver_id = message.ReceiveId,
+                Message = message.Content,
+                SendTime = message.Time,
+                isRead = message.Isread
+            };
+            return messageDto;
         }
     }
 }

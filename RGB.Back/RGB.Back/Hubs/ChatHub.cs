@@ -60,14 +60,10 @@ namespace RGB.Back.Hubs
         }
 
 
-        public async Task SendMessage(string message)
-        {
-            await Clients.Caller.SendMessageTo(_service.SendCaller(message));
-        }
-
         public async Task SendMessageToFriend(int senderId, int receiveId, string friendConnectionId ,string message)
         {
            
+            await Clients.Caller.SendMessageTo(_service.SendCaller(senderId, receiveId, message));
             await Clients.Client(friendConnectionId).SendMessageTo(_service.SendMessageToFriend(senderId, receiveId, message));
         }
 
