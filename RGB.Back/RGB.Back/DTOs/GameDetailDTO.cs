@@ -17,7 +17,7 @@ namespace RGB.Back.DTOs
 
 		public DateTime ReleaseDate { get; set; }
 
-		public int Price { get; set; }
+		public int? Price { get; set; }
 
 		public string? Cover { get; set; }
 
@@ -54,7 +54,7 @@ namespace RGB.Back.DTOs
 
 		public DateTime ReleaseDate { get; set; }
 
-		public int Price { get; set; }
+		public int? Price { get; set; }
 
 		public string? Cover { get; set; }
 

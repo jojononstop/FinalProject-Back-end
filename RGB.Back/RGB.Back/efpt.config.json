@@ -31,14 +31,6 @@
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[BillDetails]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[BillItems]",
-         "ObjectType": 0
-      },
-      {
          "Name": "[dbo].[Boards]",
          "ObjectType": 0
       },

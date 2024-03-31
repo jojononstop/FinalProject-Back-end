@@ -24,11 +24,11 @@ namespace RGB.Back.Controllers
 			_service = new CollectionService(context);
 		}
 
-		[HttpGet]
-		public async Task<IEnumerable<CollectionDTO>> GetGames(int memberId)
-		{
-			return _service.GetCollectionDetailByMemberId(memberId);
-		}
+		//[HttpGet]
+		//public async Task<IEnumerable<CollectionDTO>> GetGames(int memberId)
+		//{
+		//	return _service.GetCollectionDetailByMemberId(memberId);
+		//}
 	}
 
 
