@@ -31,6 +31,15 @@ namespace RGB.Back.Controllers
         public async Task<List<UserInfoDto>> GetUserFriends(int id)
         {
             var friends =  _service.GetAllFriends(id);
+            var onlineUsers = ChatHub.OnlineUsers;
+            foreach (var friend in friends)
+            {
+                var onlineUser = onlineUsers.Find(u => u.UserId == friend.UserId);
+                if (onlineUser != null)
+                {
+                    friend.ConnectionId = onlineUser.ConnectionId;
+                }
+            }
             return friends;
         }
 
@@ -41,9 +50,9 @@ namespace RGB.Back.Controllers
             return Ok("Send Successful!");
         }
         [HttpGet("GetMessageHistory", Name = "GetMessageHistory")]
-        public List<ChatMessageDto> GetMessageHistory(int memberId, int friendId)
+        public async Task<List<ChatMessageDto>> GetMessageHistory(int memberId, int friendId)
         {
-            var messages = _service.GetMessageHistory(memberId, friendId);
+            var messages = await _service.GetMessageHistory(memberId, friendId);
             return messages;
         }
 

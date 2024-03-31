@@ -31,9 +31,9 @@ namespace RGB.Back.Service
             return friends;
         }
 
-        public List<ChatMessageDto> GetMessageHistory(int memberId, int friendId)
+        public async Task<List<ChatMessageDto>> GetMessageHistory(int memberId, int friendId)
         {
-            var messages = _context.ChatMessages.Where(m => (m.SenderId == memberId && m.ReceiveId == friendId) || (m.SenderId == friendId && m.ReceiveId == memberId))
+            var messages = await _context.ChatMessages.Where(m => (m.SenderId == memberId && m.ReceiveId == friendId) || (m.SenderId == friendId && m.ReceiveId == memberId))
                                                 .OrderBy(m => m.Time)
                                                 .Select(m => new ChatMessageDto
                                                 {
@@ -43,7 +43,7 @@ namespace RGB.Back.Service
                                                     Message = m.Content,
                                                     SendTime = m.Time,
                                                     isRead = m.Isread
-                                                }).ToList();
+                                                }).ToListAsync();
 
             return messages;
         }
