@@ -11,7 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using RGB.Back.Service;
-using RGB.Back.Service;
+
 
 
 namespace RGB.Back
@@ -38,7 +38,7 @@ namespace RGB.Back
 
             builder.Services.AddScoped<ChatService>();
             builder.Services.AddScoped<CartService>();
-            builder.Services.AddScoped<GameService>();
+            //builder.Services.AddScoped<GameService>();
 
 
             string CorsPolicy = "AllowAny";
