@@ -7,15 +7,19 @@ using RGB.Back.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using System;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace RGB.Back.Service
 {
 	public class MemberService
 	{
 		private readonly RizzContext _context;
+		private readonly RSAEncryptor _rsaService;
 		public MemberService(RizzContext context)
 		{
 			_context = context;
+			_rsaService = new RSAEncryptor("private_key.xml", "public_key.xml");
 		}
 
 		public MemberDTO GetMemberDetailByMemberId(int memberId)
@@ -52,7 +56,7 @@ namespace RGB.Back.Service
 			return memberTagList;
 		}
 
-		public (bool, MemberDataDTO) ValidLogin(LoginDTO loginDto)
+		public (bool,int, MemberDataDTO) ValidLogin(LoginDTO loginDto)
 		{
 
 			// 根據account(帳號)取得 Member
@@ -66,20 +70,12 @@ namespace RGB.Back.Service
 					Bonus=0,
 					NickName=""
 				};
-				return (false, dto);
+				return (false,0, dto);
 			}
 
-			//// 檢查是否已經確認
-			//if (member.IsConfirmed == false)
-			//{
-			//	throw new Exception("您尚未開通會員資格, 請先收確認信, 並點選信裡的連結, 完成認證, 才能登入本網站");
-			//}
-
-			//// 將vm裡的密碼先雜湊之後,再與db裡的密碼比對
-			//var salt = HashUtility.GetSalt();
-			//var hashedPassword = HashUtility.ToSHA256(loginDto.Password, salt);
-
-			if (string.Compare(member.Password, loginDto.Password, true) != 0)
+			//解密
+			var unencryptedpassword = _rsaService.Decrypt(member.Password);
+			if (string.Compare(unencryptedpassword, loginDto.Password, true) != 0)
 			{
 				var dto = new MemberDataDTO
 				{
@@ -88,7 +84,20 @@ namespace RGB.Back.Service
 					Bonus = 0,
 					NickName = ""
 				};
-				return (false, dto);
+				return (false,0, dto);
+			}
+			// 檢查是否已經確認
+			if (member.IsConfirmed == false)
+			{
+				var dto = new MemberDataDTO
+				{
+					Id = 0,
+					AvatarUrl = null,
+					Bonus = 0,
+					NickName = ""
+				};
+				return (false, 1, dto);
+				//throw new Exception("您尚未開通會員資格, 請先收確認信, 並點選信裡的連結, 完成認證, 才能登入本網站");
 			}
 			else 
 			{
@@ -112,7 +121,7 @@ namespace RGB.Back.Service
 					Bonus = member.Bonus,
 					NickName = member.NickName
 				};
-				return (true, dto);
+				return (true,2, dto);
 			}
 		}
 
@@ -136,13 +145,14 @@ namespace RGB.Back.Service
 			{
 				return "帳號已經存在";
 			}
-
+			//加密
+			var encryptedpassword = _rsaService.Encrypt(cmDto.Password);
 			var confirmCode = Guid.NewGuid().ToString("N");
 			Member member = new Member()
 			{
 				Account = cmDto.Account,
 				//待加密
-				Password = cmDto.Password,
+				Password = encryptedpassword,
 				Mail = cmDto.Email,
 				AvatarUrl = null,
 				RegistrationDate = DateTime.Now,
@@ -160,13 +170,15 @@ namespace RGB.Back.Service
 			_context.SaveChanges();
 
 			// 發出確認信
-
-			//var urlTemplate = Request.Url.Scheme + "://" +  // 生成 http:.// 或 https://
-			//				Request.Url.Authority + "/" + // 生成網域名稱或 ip
-			//				"Developer/ActiveRegister?developerid={0}&confirmCode={1}";
-			//var url = string.Format(urlTemplate, developer.Id, developer.ConfirmCode);
-			//string name = vm.Name;
-			//string email = vm.EMail;
+			//http://localhost:3000/Id=1/ActiveconfirmCode=jk
+			var urlTemplate = "http" + "://" +  // 生成 http:.// 或 https://
+							"localhost:3000" + "/" + // 生成網域名稱或 ip
+							"Id={0}" + "/" +
+							"ActiveconfirmCode={1}";
+			var url = string.Format(urlTemplate, member.Id, member.ConfirmCode);
+			string name = cmDto.Account; // 請確認您的 CreateMemberDTO 類中是否包含了名稱（Name）和電子郵件（EMail）屬性
+			string email = cmDto.Email;
+			new EMailHelper().SendConfirmRegisterEmail(url, name, email);
 			//前台網站
 			//var url = "";
 			//string name = cmDto.Account; // 請確認您的 CreateMemberDTO 類中是否包含了名稱（Name）和電子郵件（EMail）屬性
@@ -176,20 +188,14 @@ namespace RGB.Back.Service
 			return "註冊成功";
 		}
 
-		//發送驗證信
-		public void SendConfirmationEmail() 
-		{
-
-		}
-
 		public bool ActiveRegister (int memberId, string confirmCode)
 		{
 			//驗證傳入值是否合理
 
-			if (memberId <= 0 || string.IsNullOrEmpty(confirmCode))
-			{
-				return false; // 在view中,我們會顯示'已開通,謝謝'
-			}
+			//if (memberId <= 0 || string.IsNullOrEmpty(confirmCode))
+			//{
+			//	return false; // 在view中,我們會顯示'已開通,謝謝'
+			//}
 
 			// 根據 Id, confirmCode 取得 未確認的 member
 			Member member = _context.Members.FirstOrDefault(m => m.Id == memberId && m.IsConfirmed == false && m.ConfirmCode == confirmCode);
@@ -203,5 +209,72 @@ namespace RGB.Back.Service
 
 			return true;
 		}
+
+		public string test(string word)
+		{
+
+			return _rsaService.Encrypt(word);
+		}
+
+		public string test2(string word)
+		{
+
+			return _rsaService.Decrypt(word);
+		}
+
+
+		//public string Encrypt(string password)
+		//{
+		//	// 加载密钥对
+		//	RSAParameters publicKey;
+		//	RSAParameters privateKey;
+		//	RSAEncryptor.LoadKeyPair("publicKey.txt", "privateKey.txt", out publicKey, out privateKey);
+
+		//	// 加密数据
+		//	byte[] encryptedData = RSAEncryptor.Encrypt(Encoding.UTF8.GetBytes(password), publicKey);
+
+		//	// 返回加密后的数据
+		//	return Convert.ToBase64String(encryptedData);
+		//}
+
+		//public string Decrypt(string encryptedpassword)
+		//{
+		//	// 加载密钥对
+		//	RSAParameters publicKey;
+		//	RSAParameters privateKey;
+		//	RSAEncryptor.LoadKeyPair("publicKey.txt", "privateKey.txt", out publicKey, out privateKey);
+
+		//	// 解密数据
+		//	byte[] decryptedData = RSAEncryptor.Decrypt(Convert.FromBase64String(encryptedpassword), privateKey);
+
+		//	// 返回解密后的数据
+		//	return Encoding.UTF8.GetString(decryptedData);
+		//}
+
+		//public void test()
+		//{
+		//	var rsaService = _rsaService;
+
+		//	// 获取公钥
+		//	string publicKey = rsaService.GetPublicKey();
+		//	Console.WriteLine("Public Key:");
+		//	Console.WriteLine(publicKey);
+
+		//	// 加密示例
+		//	string plainText = "Hello, world!";
+		//	string encryptedText = rsaService.Encrypt(plainText);
+		//	Console.WriteLine("Encrypted Text:");
+		//	Console.WriteLine(encryptedText);
+
+		//	// 解密示例
+		//	string decryptedText = rsaService.Decrypt(encryptedText);
+		//	Console.WriteLine("Decrypted Text:");
+		//	Console.WriteLine(decryptedText);
+
+		//	// 保存密钥示例
+		//	rsaService.SavePrivateKeyToFile("private_key.xml");
+		//	rsaService.SavePublicKeyToFile("public_key.xml");
+
+		//}
 	}
 }
