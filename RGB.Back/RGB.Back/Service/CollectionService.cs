@@ -12,24 +12,24 @@ namespace RGB.Back.Service
 			_context = context;
 		}
 
-		public List<CollectionDTO> GetCollectionDetailByMemberId(int memberId)
-		{
+		//public List<CollectionDTO> GetCollectionDetailByMemberId(int memberId)
+		//{
 
-			var collectionList = _context.Collections.AsNoTracking()
-				.Where(c => c.MemberId == memberId)
-				.Include(c=>c.BillDetail)
-				.Select(c => new CollectionDTO
-				{
-					Id = c.Id,
-					GameId = c.GameId,
-					MemberTagId =c.MemberTagId,
-					DateOfPurchase = c.BillDetail.CreateAt
-				})
-				.Distinct()
-				.ToList();
+		//	var collectionList = _context.Collections.AsNoTracking()
+		//		.Where(c => c.MemberId == memberId)
+		//		.Include(c=>c.BillDetail)
+		//		.Select(c => new CollectionDTO
+		//		{
+		//			Id = c.Id,
+		//			GameId = c.GameId,
+		//			MemberTagId =c.MemberTagId,
+		//			DateOfPurchase = c.BillDetail.CreateAt
+		//		})
+		//		.Distinct()
+		//		.ToList();
 
-			return collectionList;
-		}
+		//	return collectionList;
+		//}
 
 		public void UpdateCollectionTags(int Id,int memberTagId)
 		{

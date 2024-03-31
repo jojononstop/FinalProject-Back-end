@@ -29,8 +29,6 @@ public partial class Game
 
     public virtual ICollection<BanGame> BanGames { get; set; } = new List<BanGame>();
 
-    public virtual ICollection<BillItem> BillItems { get; set; } = new List<BillItem>();
-
     public virtual CartItem CartItem { get; set; }
 
     public virtual ICollection<Collection> Collections { get; set; } = new List<Collection>();

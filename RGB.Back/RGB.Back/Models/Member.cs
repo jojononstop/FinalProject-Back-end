@@ -45,8 +45,6 @@ public partial class Member
 
     public virtual ICollection<BanMember> BanMemberMember2s { get; set; } = new List<BanMember>();
 
-    public virtual ICollection<BillDetail> BillDetails { get; set; } = new List<BillDetail>();
-
     public virtual ICollection<Board> Boards { get; set; } = new List<Board>();
 
     public virtual ICollection<BonusItem> BonusItems { get; set; } = new List<BonusItem>();

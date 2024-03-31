@@ -13,7 +13,7 @@ public partial class WishListe
 
     public int GameId { get; set; }
 
-    public int DiscountId { get; set; }
+    public int? DiscountId { get; set; }
 
     public virtual Discount Discount { get; set; }
 

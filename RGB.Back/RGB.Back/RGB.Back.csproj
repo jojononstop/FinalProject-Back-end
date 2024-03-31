@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <Folder Include="Models\" />
+    <None Include="efpt.config.json.user" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

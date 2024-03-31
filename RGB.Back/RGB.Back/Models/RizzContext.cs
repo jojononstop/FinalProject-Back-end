@@ -21,10 +21,6 @@ public partial class RizzContext : DbContext
 
     public virtual DbSet<BanMember> BanMembers { get; set; }
 
-    public virtual DbSet<BillDetail> BillDetails { get; set; }
-
-    public virtual DbSet<BillItem> BillItems { get; set; }
-
     public virtual DbSet<Board> Boards { get; set; }
 
     public virtual DbSet<BonusItem> BonusItems { get; set; }
@@ -71,11 +67,15 @@ public partial class RizzContext : DbContext
 
     public virtual DbSet<Order> Orders { get; set; }
 
-    public virtual DbSet<Payment> Payments { get; set; }
-
     public virtual DbSet<Picture> Pictures { get; set; }
 
     public virtual DbSet<Tag> Tags { get; set; }
+
+    public virtual DbSet<TransferMethod> TransferMethods { get; set; }
+
+    public virtual DbSet<TransferPayment> TransferPayments { get; set; }
+
+    public virtual DbSet<TransferRefund> TransferRefunds { get; set; }
 
     public virtual DbSet<WishListe> WishListes { get; set; }
 
@@ -152,60 +152,6 @@ public partial class RizzContext : DbContext
                 .HasForeignKey(d => d.Member2Id)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_BanMembers_Members1");
-        });
-
-        modelBuilder.Entity<BillDetail>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK_BillDetails_1");
-
-            entity.Property(e => e.Address)
-                .IsRequired()
-                .HasMaxLength(500);
-            entity.Property(e => e.CreateAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-            entity.Property(e => e.Name)
-                .IsRequired()
-                .HasMaxLength(500);
-            entity.Property(e => e.Number)
-                .IsRequired()
-                .HasMaxLength(10);
-            entity.Property(e => e.PaymentStatus)
-                .IsRequired()
-                .HasMaxLength(500)
-                .HasColumnName("Payment_status");
-            entity.Property(e => e.ShippingStatus)
-                .IsRequired()
-                .HasMaxLength(500)
-                .HasColumnName("Shipping_status");
-            entity.Property(e => e.Sn)
-                .IsRequired()
-                .HasMaxLength(500);
-
-            entity.HasOne(d => d.Discount).WithMany(p => p.BillDetails)
-                .HasForeignKey(d => d.DiscountId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_BillDetails_Discounts");
-
-            entity.HasOne(d => d.Member).WithMany(p => p.BillDetails)
-                .HasForeignKey(d => d.MemberId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_BillDetails_Members");
-        });
-
-        modelBuilder.Entity<BillItem>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK_BillItems_1");
-
-            entity.Property(e => e.GameName)
-                .IsRequired()
-                .HasMaxLength(50);
-            entity.Property(e => e.Price).HasColumnType("decimal(18, 0)");
-
-            entity.HasOne(d => d.Game).WithMany(p => p.BillItems)
-                .HasForeignKey(d => d.GameId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_BillItems_Games");
         });
 
         modelBuilder.Entity<Board>(entity =>
@@ -310,11 +256,6 @@ public partial class RizzContext : DbContext
         modelBuilder.Entity<Collection>(entity =>
         {
             entity.Property(e => e.Id).ValueGeneratedNever();
-
-            entity.HasOne(d => d.BillDetail).WithMany(p => p.Collections)
-                .HasForeignKey(d => d.BillDetailId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Collections_BillDetails");
 
             entity.HasOne(d => d.Game).WithMany(p => p.Collections)
                 .HasForeignKey(d => d.GameId)
@@ -514,7 +455,7 @@ public partial class RizzContext : DbContext
             entity.Property(e => e.NickName).HasMaxLength(50);
             entity.Property(e => e.Password)
                 .IsRequired()
-                .HasMaxLength(50);
+                .HasMaxLength(500);
             entity.Property(e => e.RegistrationDate).HasColumnType("datetime");
         });
 
@@ -577,30 +518,6 @@ public partial class RizzContext : DbContext
                 .HasMaxLength(500);
         });
 
-        modelBuilder.Entity<Payment>(entity =>
-        {
-            entity.ToTable("Payment");
-
-            entity.Property(e => e.Id)
-                .ValueGeneratedNever()
-                .HasColumnName("id");
-            entity.Property(e => e.CreateAt).HasColumnType("datetime");
-            entity.Property(e => e.GameId).ValueGeneratedOnAdd();
-            entity.Property(e => e.IsSuccess).HasColumnName("isSuccess");
-            entity.Property(e => e.Message)
-                .IsRequired()
-                .HasColumnType("ntext")
-                .HasColumnName("message");
-            entity.Property(e => e.PaidAt)
-                .HasColumnType("datetime")
-                .HasColumnName("paidAt");
-            entity.Property(e => e.PaymentMethod)
-                .IsRequired()
-                .HasMaxLength(500)
-                .HasColumnName("payment_method");
-            entity.Property(e => e.UpdateAt).HasColumnType("datetime");
-        });
-
         modelBuilder.Entity<Picture>(entity =>
         {
             entity.Property(e => e.Image)
@@ -631,13 +548,50 @@ public partial class RizzContext : DbContext
                 .IsUnicode(false);
         });
 
+        modelBuilder.Entity<TransferMethod>(entity =>
+        {
+            entity.Property(e => e.PaymentMethod)
+                .IsRequired()
+                .HasMaxLength(500);
+        });
+
+        modelBuilder.Entity<TransferPayment>(entity =>
+        {
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Info)
+                .IsRequired()
+                .HasMaxLength(1000)
+                .HasColumnName("info");
+            entity.Property(e => e.PaymentAmount).HasColumnType("decimal(18, 0)");
+
+            entity.HasOne(d => d.IdNavigation).WithOne(p => p.TransferPayment)
+                .HasForeignKey<TransferPayment>(d => d.Id)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TransferPayments_TransferMethods");
+        });
+
+        modelBuilder.Entity<TransferRefund>(entity =>
+        {
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.RefundAmount).HasColumnType("decimal(18, 0)");
+
+            entity.HasOne(d => d.IdNavigation).WithOne(p => p.TransferRefund)
+                .HasForeignKey<TransferRefund>(d => d.Id)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TransferRefunds_TransferMethods");
+
+            entity.HasOne(d => d.Id1).WithOne(p => p.TransferRefund)
+                .HasForeignKey<TransferRefund>(d => d.Id)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TransferRefunds_TransferPayments");
+        });
+
         modelBuilder.Entity<WishListe>(entity =>
         {
             entity.Property(e => e.Id).ValueGeneratedNever();
 
             entity.HasOne(d => d.Discount).WithMany(p => p.WishListes)
                 .HasForeignKey(d => d.DiscountId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_WishListes_Discounts");
 
             entity.HasOne(d => d.Game).WithMany(p => p.WishListes)
