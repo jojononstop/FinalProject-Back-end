@@ -28,6 +28,4 @@ public partial class Discount
     public virtual Developer Developer { get; set; }
 
     public virtual ICollection<DiscountItem> DiscountItems { get; set; } = new List<DiscountItem>();
-
-    public virtual ICollection<WishListe> WishListes { get; set; } = new List<WishListe>();
 }

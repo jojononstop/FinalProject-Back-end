@@ -590,10 +590,6 @@ public partial class RizzContext : DbContext
         {
             entity.Property(e => e.Id).ValueGeneratedNever();
 
-            entity.HasOne(d => d.Discount).WithMany(p => p.WishListes)
-                .HasForeignKey(d => d.DiscountId)
-                .HasConstraintName("FK_WishListes_Discounts");
-
             entity.HasOne(d => d.Game).WithMany(p => p.WishListes)
                 .HasForeignKey(d => d.GameId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
