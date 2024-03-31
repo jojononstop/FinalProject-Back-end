@@ -21,11 +21,13 @@
 //                _gameService = gameService; // 注入GameService
 //            }
 
-//            // 購物車中商品的請求資訊模型
-//            public class RequestInfo
-//            {
-//                public int GameId { get; set; } // 遊戲 ID
-//                public int Quantity { get; set; } = 1; // 數量，默认為 1
+            // 購物車中商品的請求資訊模型
+            public class RequestInfo
+            {
+                public int GameId { get; set; } // 遊戲 ID
+
+
+                public int Quantity { get; set; } = 1; // 數量，默认為 1
 
 //                public int CartId { get; set; } // 購物車 ID
 

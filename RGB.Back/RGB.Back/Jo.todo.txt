@@ -1,0 +1,5 @@
+﻿TODO:
+1.ecpay api+渲染{}
+2.linepay顯示付款成功(後台不用串到，database更改)
+3.訂單api+渲染{}
+4.刻板

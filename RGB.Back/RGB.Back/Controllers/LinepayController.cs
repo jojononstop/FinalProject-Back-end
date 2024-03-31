@@ -27,7 +27,7 @@ namespace RGB.Back.Controllers
         }
 
         [HttpGet("Cancel")]
-        public async void CancelTransaction([FromQuery] string transactionId)
+        public async Task CancelTransaction([FromQuery] string transactionId)
         {
             _linePayService.TransactionCancel(transactionId);
         }
