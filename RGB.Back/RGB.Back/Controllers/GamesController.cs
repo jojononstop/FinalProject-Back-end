@@ -32,6 +32,63 @@ namespace RGB.Back.Controllers
 			return games;
 		}
 
+		[HttpPost("popular")]
+		public async Task<IEnumerable<GameDetailDTO>> GetPopularGames(int begin, int end)
+		{
+			var gameIds = await _context.Collections
+					 .GroupBy(x => x.GameId) 
+					 .OrderByDescending(g => g.Count()) 
+					 .Select(g => g.Key) 
+					 .Skip(begin)
+					 .Take(end)
+					 .ToListAsync();
+
+			var gameDTOs = new List<GameDetailDTO>();
+			foreach (var id in gameIds)
+			{
+				var game = _service.GetGameDetailByGameId(id);
+				gameDTOs.Add(game);
+			}
+
+			return gameDTOs;
+		}
+
+		[HttpPost("Commend")]
+		public async Task<IEnumerable<int>> GetCommendGames(int memberId)
+		{
+			var gameIds = await _context.Collections
+					 .Where(x=> x.MemberId == memberId)
+					 .Select(x => x.GameId)
+					 .ToListAsync();
+
+			var tagList = new List<int>();
+			foreach (var id in gameIds)
+			{
+				var tags = await _context.GameTags
+					 .Where(x => x.GameId == id)
+					 .Select(g => g.GameId)
+					 .ToListAsync();
+				tagList.AddRange(tags);
+			}
+
+			//var gameIds = await _context.Collections
+			//		 .GroupBy(x => x.GameId)
+			//		 .OrderByDescending(g => g.Count())
+			//		 .Select(g => g.Key)
+			//		 .Take(6)
+			//		 .ToListAsync();
+
+			//var gameDTOs = new List<GameDetailDTO>();
+			//foreach (var id in gameIds)
+			//{
+			//	var game = _service.GetGameDetailByGameId(id);
+			//	gameDTOs.Add(game);
+			//}
+
+			//return gameDTOs;
+			return tagList;
+		}
+
 		// GET: api/Games/5
 		[HttpGet("{id}")]
 		public async Task<GameDetailDTO> GetGame(int id)
