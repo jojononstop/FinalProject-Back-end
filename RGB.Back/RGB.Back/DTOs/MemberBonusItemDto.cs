@@ -7,5 +7,9 @@
         public int MemberId { get; set; }
 
         public int BonusId { get; set; }
+
+        public int ProductType { get; set; }
+
+        public bool Using { get; set; }
     }
 }

@@ -14,14 +14,16 @@ namespace RGB.Back.Service
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        //Get All Bonus Product
+        // Get All Bonus Product
+        // 取得全部商品
         public async Task<List<BonusDto>> GetAllBonusProductAsync()
         {
             var bonusProducts = await _context.BonusProducts.AsNoTracking().ToListAsync();
             return DBToBonusDto(bonusProducts);
         }
 
-        //Get All Bonus Product Type
+        // Get All Bonus Product Type
+        // 取得全部類型
         public async Task<List<BonusDto>> GetAllBonusProductTypeAsync()
         {
             var bonusProductType = await _context.BonusProductTypes.AsNoTracking().ToListAsync();
@@ -29,17 +31,8 @@ namespace RGB.Back.Service
             return DBToBonusDto(bonusProductType);
         }
 
-        //Get Member BonusItem
-        public async Task<List<MemberBonusItemDto>> GetMemberBonusItemAsync(int memberId)
-        {
-            var bonusItems = await _context.BonusItems
-                .AsNoTracking()
-                .Where(x => x.MemberId == memberId)
-                .ToListAsync();
-            return DBToBonusItemDto(bonusItems);
-        }
-
-        //Get Bonus Product
+        // Get Bonus Product
+        // 依據 ID 查詢 BonusProduct
         public async Task<BonusDto> GetBonusProductAsync(int id)
         {
             var bonusProduct = await _context.BonusProducts
@@ -60,29 +53,69 @@ namespace RGB.Back.Service
             return bonusDto;
         }
 
-        // Get MemberBonusItem
+        // Get BonusItem By Member
+        // 依據會員 ID 查詢會員的 BonusItem
+        //public async Task<List<MemberBonusItemDto>> GetBonusProductByMemberAsync(int memberId)
+        //{
+        //    var bonusItem = await _context.BonusItems
+        //        .AsNoTracking()
+        //        .Include(db => db.Bonus)
+        //        .Include(db => db.Bonus.ProductType)
+        //        .Where(x => x.MemberId == memberId)
+        //        .ToListAsync();
+        //    return DBToBonusItemDto(bonusItem);
+        //}
+
+        // Get BonusItem By Member
+        // 依據會員 ID 查詢會員的 BonusItem
         public async Task<List<MemberBonusItemDto>> GetBonusProductByMemberAsync(int memberId)
         {
             var bonusItem = await _context.BonusItems
                 .AsNoTracking()
+                .Include(db => db.Bonus)
+                .Include(db => db.Bonus.ProductType)
                 .Where(x => x.MemberId == memberId)
                 .ToListAsync();
             return DBToBonusItemDto(bonusItem);
         }
 
+        // Update MemberBonusItem Using
+        public async Task UpdateMemberBonusItemAsync(int memberId, int bonusId, bool usingStatus)
+        {
+            //遍歷所有相同 MemberId 的相同 BonusItem
+            var bonusItems = await _context.BonusItems
+                .Where(x => x.MemberId == memberId)
+                .ToListAsync();
+            foreach (var item in bonusItems)
+            {
+                //將與目標不同的 BonusItem 的 Using 屬性設為 false
+                if (item.BonusId != bonusId)
+                {
+                    item.Using = false;
+                }
+                else
+                {
+                    item.Using = usingStatus;
+                }
+            }
+            // 保存變更
+            await _context.SaveChangesAsync();
+        }
 
-        //Get Bonus Product Type
+        // Get Bonus Product Type
+        // 依據類型 ID 查詢類型
         public async Task<List<BonusDto>> GetBonusProductByTypeAsync(int bonusProductTypeId)
         {
             var bonusProducts = await _context.BonusProducts
-                .Include(bp => bp.ProductType) // 加載 ProductType 導航屬性
+                .Include(bp => bp.ProductType)
                 .AsNoTracking()
                 .Where(x => x.ProductTypeId == bonusProductTypeId)
                 .ToListAsync();
             return DBToBonusDto(bonusProducts);
         }
 
-        //Get Bonus Product Name
+        // Get Bonus Product Name
+        // 依據名稱查詢商品
         public async Task<List<BonusDto>> GetBonusProductByNameAsync(string bonusProductName)
         {
             if (string.IsNullOrEmpty(bonusProductName))
@@ -99,7 +132,8 @@ namespace RGB.Back.Service
             return DBToBonusDto(bonusProducts);
         }
 
-        //Find User Funtion
+        // Get User
+        // 搜尋會員
         public async Task<bool> UserExistsAsync(int memberId)
         {
             // 異步搜尋在資料庫中查詢是否存在指定的會員ID
@@ -107,20 +141,18 @@ namespace RGB.Back.Service
             return user != null;
         }
 
-        //Add Product To BonusItem - Bonus Product To UserItem
+        // Add Product To BonusItem
+        // 新增商品到資料庫
         public async Task<bool> ProductToBonusItemAsync(int memberId, int productId)
         {
             try
             {
-                // 創建一個新的Bonus Item
                 var bonusItem = new BonusItem
                 {
                     MemberId = memberId,
                     BonusId = productId,
-                    // 可能還有其他相關屬性的設定，例如時間戳記等等
                 };
 
-                // 將Bonus Item添加到資料庫
                 _context.BonusItems.Add(bonusItem);
                 await _context.SaveChangesAsync();
 
@@ -128,12 +160,11 @@ namespace RGB.Back.Service
             }
             catch (Exception)
             {
-                // 處理錯誤
                 return false;
             }
         }
 
-        //DB to BonusDTO
+        // DB to BonusDTO by BonusProduct
         private List<BonusDto> DBToBonusDto(List<BonusProduct> bonusProduct)
         {
             var bonusList = new List<BonusDto>();
@@ -154,7 +185,7 @@ namespace RGB.Back.Service
             return bonusList;
         }
 
-        //DB to BonusDTO
+        //DB to BonusDTO by BonusProductType
         private List<BonusDto> DBToBonusDto(List<BonusProductType> bonusProductType)
         {
             var bonusList = new List<BonusDto>();
@@ -182,7 +213,9 @@ namespace RGB.Back.Service
                 {
                     Id = item.Id,
                     MemberId = item.MemberId,
-                    BonusId = item.BonusId
+                    BonusId = item.BonusId,
+                    ProductType = item.Bonus.ProductType.Id,
+                    Using = item.Using
                 };
                 bonusItemList.Add(memberBonusItemDto);
             }
