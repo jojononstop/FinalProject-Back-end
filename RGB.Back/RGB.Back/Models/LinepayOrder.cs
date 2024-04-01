@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace RGB.Back.Models;
 
-public partial class OderDetail
+public partial class LinepayOrder
 {
     public int Id { get; set; }
 
@@ -13,11 +13,9 @@ public partial class OderDetail
 
     public int GameId { get; set; }
 
-    public int Qty { get; set; }
+    public string Currency { get; set; }
 
-    public int UnitPrice { get; set; }
+    public int TotalAmount { get; set; }
 
-    public virtual Order Id1 { get; set; }
-
-    public virtual Game IdNavigation { get; set; }
+    public int DiscountAmount { get; set; }
 }

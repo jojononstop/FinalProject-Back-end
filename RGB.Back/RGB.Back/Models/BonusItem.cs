@@ -13,6 +13,8 @@ public partial class BonusItem
 
     public int BonusId { get; set; }
 
+    public bool? Using { get; set; }
+
     public virtual BonusProduct Bonus { get; set; }
 
     public virtual Member Member { get; set; }

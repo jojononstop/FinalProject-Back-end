@@ -29,8 +29,6 @@ public partial class RizzContext : DbContext
 
     public virtual DbSet<BonusProductType> BonusProductTypes { get; set; }
 
-    public virtual DbSet<Cart> Carts { get; set; }
-
     public virtual DbSet<CartItem> CartItems { get; set; }
 
     public virtual DbSet<ChatMessage> ChatMessages { get; set; }
@@ -57,13 +55,13 @@ public partial class RizzContext : DbContext
 
     public virtual DbSet<Image> Images { get; set; }
 
+    public virtual DbSet<LinepayOrder> LinepayOrders { get; set; }
+
     public virtual DbSet<Member> Members { get; set; }
 
     public virtual DbSet<MemberTag> MemberTags { get; set; }
 
     public virtual DbSet<Message> Messages { get; set; }
-
-    public virtual DbSet<OderDetail> OderDetails { get; set; }
 
     public virtual DbSet<Order> Orders { get; set; }
 
@@ -207,39 +205,19 @@ public partial class RizzContext : DbContext
                 .HasMaxLength(50);
         });
 
-        modelBuilder.Entity<Cart>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK_Carts_1");
-
-            entity.Property(e => e.MemberName)
-                .IsRequired()
-                .HasMaxLength(500);
-            entity.Property(e => e.Message)
-                .IsRequired()
-                .HasMaxLength(500);
-            entity.Property(e => e.PaymentMethod).HasMaxLength(500);
-
-            entity.HasOne(d => d.Member).WithMany(p => p.Carts)
-                .HasForeignKey(d => d.MemberId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Carts_Members");
-        });
-
         modelBuilder.Entity<CartItem>(entity =>
         {
             entity.Property(e => e.Id).ValueGeneratedOnAdd();
-            entity.Property(e => e.Total).HasColumnType("decimal(18, 0)");
-            entity.Property(e => e.UnitPrice).HasColumnType("decimal(18, 0)");
 
             entity.HasOne(d => d.IdNavigation).WithOne(p => p.CartItem)
                 .HasForeignKey<CartItem>(d => d.Id)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_CartItems_Carts");
-
-            entity.HasOne(d => d.Id1).WithOne(p => p.CartItem)
-                .HasForeignKey<CartItem>(d => d.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_CartItems_Games");
+
+            entity.HasOne(d => d.Member).WithMany(p => p.CartItems)
+                .HasForeignKey(d => d.MemberId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CartItems_Members");
         });
 
         modelBuilder.Entity<ChatMessage>(entity =>
@@ -355,18 +333,20 @@ public partial class RizzContext : DbContext
 
         modelBuilder.Entity<EcpayOrder>(entity =>
         {
-            entity.HasKey(e => e.MerchantTradeNo);
+            entity.HasKey(e => e.MerchantTradeNo).HasName("PK_EcpayOrders_1");
 
             entity.Property(e => e.MerchantTradeNo).HasMaxLength(50);
-            entity.Property(e => e.MemberId)
-                .HasMaxLength(50)
-                .HasColumnName("MemberID");
+            entity.Property(e => e.MemberId).HasColumnName("MemberID");
             entity.Property(e => e.PaymentDate).HasColumnType("datetime");
             entity.Property(e => e.PaymentType).HasMaxLength(50);
             entity.Property(e => e.PaymentTypeChargeFee).HasMaxLength(50);
             entity.Property(e => e.RtnMsg).HasMaxLength(50);
             entity.Property(e => e.TradeDate).HasMaxLength(50);
             entity.Property(e => e.TradeNo).HasMaxLength(50);
+
+            entity.HasOne(d => d.Member).WithMany(p => p.EcpayOrders)
+                .HasForeignKey(d => d.MemberId)
+                .HasConstraintName("FK_EcpayOrders_Members");
         });
 
         modelBuilder.Entity<Friend>(entity =>
@@ -436,6 +416,13 @@ public partial class RizzContext : DbContext
                 .HasConstraintName("FK_Images_Games");
         });
 
+        modelBuilder.Entity<LinepayOrder>(entity =>
+        {
+            entity.Property(e => e.Currency)
+                .IsRequired()
+                .HasMaxLength(500);
+        });
+
         modelBuilder.Entity<Member>(entity =>
         {
             entity.Property(e => e.Account)
@@ -490,32 +477,21 @@ public partial class RizzContext : DbContext
                 .HasConstraintName("FK_Messages_Members");
         });
 
-        modelBuilder.Entity<OderDetail>(entity =>
-        {
-            entity.Property(e => e.Id).ValueGeneratedNever();
-
-            entity.HasOne(d => d.IdNavigation).WithOne(p => p.OderDetail)
-                .HasForeignKey<OderDetail>(d => d.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_OderDetails_Games");
-
-            entity.HasOne(d => d.Id1).WithOne(p => p.OderDetail)
-                .HasForeignKey<OderDetail>(d => d.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_OderDetails_Orders");
-        });
-
         modelBuilder.Entity<Order>(entity =>
         {
+            entity.HasKey(e => e.Id).HasName("PK_Orders_1");
+
             entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.Message).HasMaxLength(500);
-            entity.Property(e => e.OrderDate).HasColumnType("datetime");
-            entity.Property(e => e.PaymentMethod)
-                .IsRequired()
-                .HasMaxLength(500);
-            entity.Property(e => e.Status)
-                .IsRequired()
-                .HasMaxLength(500);
+
+            entity.HasOne(d => d.Game).WithMany(p => p.Orders)
+                .HasForeignKey(d => d.GameId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Orders_Games");
+
+            entity.HasOne(d => d.IdNavigation).WithOne(p => p.Order)
+                .HasForeignKey<Order>(d => d.Id)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Orders_Members");
         });
 
         modelBuilder.Entity<Picture>(entity =>
@@ -588,8 +564,6 @@ public partial class RizzContext : DbContext
 
         modelBuilder.Entity<WishListe>(entity =>
         {
-            entity.Property(e => e.Id).ValueGeneratedNever();
-
             entity.HasOne(d => d.Game).WithMany(p => p.WishListes)
                 .HasForeignKey(d => d.GameId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
