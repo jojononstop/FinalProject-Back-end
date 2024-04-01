@@ -22,7 +22,7 @@ namespace RGB.Back.Controllers
 
 
         // GET: api/CartItems/5
-        [HttpGet("{MemberId}")]
+        [HttpGet("{memberId}")]
         public async Task<List<CartItem>> GetCartItem(int memberId)
         {
             var cartItem = await _context.CartItems.AsNoTracking().Where(x=> x.MemberId == memberId).ToListAsync();
