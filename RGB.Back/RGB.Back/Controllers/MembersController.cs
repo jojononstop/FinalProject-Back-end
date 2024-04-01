@@ -368,10 +368,7 @@ namespace RGB.Back.Controllers
 		public async Task<string> test2(string word)
 		{
 
-
-
 			return _service.test2(word);
-
 
 		}
 

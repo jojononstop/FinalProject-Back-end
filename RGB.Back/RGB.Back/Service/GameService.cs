@@ -312,6 +312,7 @@ namespace RGB.Back.Service
 				gameDto.Id = game.Id;
 				gameDto.Name = game.Name;
 				gameDto.Introduction = game.Introduction;
+				
 				gameDto.Price = (int)game.Price;
 				gameDto.ReleaseDate = new DateTime(game.ReleaseDate.Year, game.ReleaseDate.Month, game.ReleaseDate.Day);
 				gameDto.Cover = game.Cover;
