@@ -37,7 +37,7 @@ namespace RGB.Back.Service
 
 
 		//拆jwt
-		public ClaimsPrincipal DecodeJWT(string jwtToken,  string audience, SecurityKey securityKey)
+		public ClaimsPrincipal DecodeJWT(string jwtToken, SecurityKey securityKey)
 		{
 			var tokenHandler = new JwtSecurityTokenHandler();
 
