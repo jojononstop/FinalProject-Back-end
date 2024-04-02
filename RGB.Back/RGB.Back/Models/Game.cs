@@ -47,7 +47,7 @@ public partial class Game
 
     public virtual ICollection<Image> Images { get; set; } = new List<Image>();
 
-    public virtual OderDetail OderDetail { get; set; }
+    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
     public virtual ICollection<WishListe> WishListes { get; set; } = new List<WishListe>();
 }

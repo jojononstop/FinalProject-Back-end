@@ -49,11 +49,13 @@ public partial class Member
 
     public virtual ICollection<BonusItem> BonusItems { get; set; } = new List<BonusItem>();
 
-    public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
+    public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
 
     public virtual ICollection<Collection> Collections { get; set; } = new List<Collection>();
 
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
+
+    public virtual ICollection<EcpayOrder> EcpayOrders { get; set; } = new List<EcpayOrder>();
 
     public virtual ICollection<Friend> FriendMember1s { get; set; } = new List<Friend>();
 
