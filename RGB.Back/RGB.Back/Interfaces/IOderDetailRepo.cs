@@ -1,11 +1,11 @@
-﻿using RGB.Back.DTOs;
+﻿//using RGB.Back.DTOs;
 
-namespace RGB.Back.Interfaces
-{
-    public interface IOderDetailRepo
-    {
-        List<OrderDetailsDto> Search(int gameId);
+//namespace RGB.Back.Interfaces
+//{
+//    public interface IOderDetailRepo
+//    {
+//        List<OrderDetailsDto> Search(int gameId);
 
-        OrderDetailsDto Get(int id);
-    }
-}
+//        OrderDetailsDto Get(int id);
+//    }
+//}
