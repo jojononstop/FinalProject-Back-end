@@ -65,7 +65,7 @@ public partial class Member
 
     public virtual ICollection<Message> Messages { get; set; } = new List<Message>();
 
-    public virtual Order Order { get; set; }
+    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
     public virtual ICollection<Picture> Pictures { get; set; } = new List<Picture>();
 

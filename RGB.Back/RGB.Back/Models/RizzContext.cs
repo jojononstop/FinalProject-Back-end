@@ -55,8 +55,6 @@ public partial class RizzContext : DbContext
 
     public virtual DbSet<Image> Images { get; set; }
 
-    public virtual DbSet<LinepayOrder> LinepayOrders { get; set; }
-
     public virtual DbSet<Member> Members { get; set; }
 
     public virtual DbSet<MemberTag> MemberTags { get; set; }
@@ -233,8 +231,6 @@ public partial class RizzContext : DbContext
 
         modelBuilder.Entity<Collection>(entity =>
         {
-            entity.Property(e => e.Id).ValueGeneratedNever();
-
             entity.HasOne(d => d.Game).WithMany(p => p.Collections)
                 .HasForeignKey(d => d.GameId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -416,13 +412,6 @@ public partial class RizzContext : DbContext
                 .HasConstraintName("FK_Images_Games");
         });
 
-        modelBuilder.Entity<LinepayOrder>(entity =>
-        {
-            entity.Property(e => e.Currency)
-                .IsRequired()
-                .HasMaxLength(500);
-        });
-
         modelBuilder.Entity<Member>(entity =>
         {
             entity.Property(e => e.Account)
@@ -481,15 +470,13 @@ public partial class RizzContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PK_Orders_1");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
-
             entity.HasOne(d => d.Game).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.GameId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Orders_Games");
 
-            entity.HasOne(d => d.IdNavigation).WithOne(p => p.Order)
-                .HasForeignKey<Order>(d => d.Id)
+            entity.HasOne(d => d.Member).WithMany(p => p.Orders)
+                .HasForeignKey(d => d.MemberId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Orders_Members");
         });

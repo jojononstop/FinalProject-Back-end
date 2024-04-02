@@ -100,10 +100,6 @@
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[LinepayOrders]",
-         "ObjectType": 0
-      },
-      {
          "Name": "[dbo].[Members]",
          "ObjectType": 0
       },

@@ -9,9 +9,9 @@ public partial class CartItem
 {
     public int Id { get; set; }
 
-    public int GameId { get; set; }
-
     public int MemberId { get; set; }
+
+    public int GameId { get; set; }
 
     public virtual Game IdNavigation { get; set; }
 
