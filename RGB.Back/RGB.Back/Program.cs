@@ -1,7 +1,17 @@
-ï»¿
+
+
+using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using RGB.Back.Hubs;
 using RGB.Back.Models;
+using RGB.Back.Configuration;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 using RGB.Back.Service;
+
 
 
 namespace RGB.Back
@@ -10,53 +20,69 @@ namespace RGB.Back
 	{
 		public static void Main(string[] args)
 		{
-            var builder = WebApplication.CreateBuilder(args);
+			var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
             builder.Services.AddDbContext<RizzContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("Rizz"));
             });
 
-            string CorsPolicy = "AllowAny";
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy(
-                    name: CorsPolicy,
-                    policy =>
-                    {
-                        policy.WithOrigins("*").WithHeaders("*").WithMethods("*");
-                    });
-            });
+           
+			
 
-            // æ³¨å…¥ RGB.Back.Sefvice
+			builder.Services.AddSignalR()
+							.AddJsonProtocol(options =>
+							{
+											  options.PayloadSerializerOptions.PropertyNamingPolicy = null;
+							});
+
+            builder.Services.AddScoped<ChatService>();
             builder.Services.AddScoped<CartService>();
-            builder.Services.AddScoped<GameService>();
+            //builder.Services.AddScoped<GameService>();
 
+
+            string CorsPolicy = "AllowAny";
+			builder.Services.AddCors(options =>
+			{
+				options.AddPolicy(
+					name: CorsPolicy,
+					policy =>
+					{
+						policy.WithOrigins("*").WithHeaders("*").WithMethods("*");
+					});
+			});
 
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+			builder.Services.AddEndpointsApiExplorer();
+			builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
-
-            app.UseCors(CorsPolicy);
+			// Configure the HTTP request pipeline.
+			if (app.Environment.IsDevelopment())
+			{
+				app.UseSwagger();
+				app.UseSwaggerUI();
+			}
+			//±Ò¥Î¨­¤ÀÃÑ§O
+			app.UseAuthentication();
+			//±Ò¥Î±ÂÅv¥\¯à
+			app.UseCors(CorsPolicy);
+          
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+			app.UseDefaultFiles();
+			app.UseStaticFiles();
 
-
+			app.MapHub<ChatHub>("/chatHub", options =>
+			{
+				options.Transports = HttpTransportType.WebSockets | HttpTransportType.LongPolling;
+			});
             app.MapControllers();
 
             app.Run();
+		}
         }
     }
-}
+

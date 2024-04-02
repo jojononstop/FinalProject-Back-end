@@ -1,0 +1,32 @@
+﻿===ToDo==========================================
+
+
+===OK==========================================
+
+GET BonusProduct
+[V]無法抓到商品Type類型
+[V]完成
+
+GET AllTypes
+[V]完成
+
+GET BonusProducts
+[V]找不到名稱
+[V]完成
+
+GET BonusProduct Name
+[V]找不到Type
+[V]完成
+
+GET BonusProduct Type
+[V]找不到對應Type的商品
+[V]完成
+
+POST BonusProduct Type
+[V]無法正常新增至使用者收藏庫
+[V]判斷是否有使用者
+[V]完成
+
+GET BonusItemByMember
+[V]無法正確依Id找到Member底下的Item
+[V]完成

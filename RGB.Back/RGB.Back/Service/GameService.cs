@@ -49,12 +49,23 @@ namespace RGB.Back.Service
 			var DLCs = GetDLCs(gameId);
 			var images = GetImages(gameId);
 			var ratings = GetRating(gameId);
-			var discointData = GetDiscountData(game,discounts);
+			var discointData = GetDiscountData(game, discounts);
 
 			gameDto.Id = game.Id;
 			gameDto.Name = game.Name;
 			gameDto.Introduction = game.Introduction;
-			gameDto.Price = (int)game.Price;
+			if (game.Price == null)
+			{
+				gameDto.Price = null;
+			}
+			else if (game.Price == 0)
+			{
+				gameDto.Price = 0;
+			}
+			else
+			{
+				gameDto.Price = (int)game.Price;
+			}
 			gameDto.ReleaseDate = new DateTime(game.ReleaseDate.Year, game.ReleaseDate.Month, game.ReleaseDate.Day);
 			gameDto.Cover = game.Cover;
 			//gameDto.MaxPercent = game.MaxPercent;
@@ -66,8 +77,8 @@ namespace RGB.Back.Service
 			gameDto.DLCs = DLCs;
 			gameDto.DisplayImages = images;
 			gameDto.Rating = ratings;
-			gameDto.DiscountPercent =discointData.discountPercent;
-			gameDto.DiscountPrice =discointData.discountPrice;
+			gameDto.DiscountPercent = discointData.discountPercent;
+			gameDto.DiscountPrice = discointData.discountPrice;
 
 			return gameDto;
 		}
@@ -77,7 +88,7 @@ namespace RGB.Back.Service
 			var games = _context.Games.AsNoTracking()
 				.Where(x => x.DeveloperId == developerId)
 				.ToList();
-	
+
 			return GameToGameDetailDTO(games);
 		}
 
@@ -123,7 +134,18 @@ namespace RGB.Back.Service
 				dlcDto.Id = dlc.Id;
 				dlcDto.Name = dlc.Name;
 				dlcDto.Introduction = dlc.Introduction;
-				dlcDto.Price = (int)dlc.Price;
+				if (dlcDto.Price == null)
+				{
+					dlcDto.Price = null;
+				}
+				else if (dlcDto.Price == 0)
+				{
+					dlcDto.Price = 0;
+				}
+				else
+				{
+					dlcDto.Price = (int)dlcDto.Price;
+				}
 				dlcDto.ReleaseDate = new DateTime(dlc.ReleaseDate.Year, dlc.ReleaseDate.Month, dlc.ReleaseDate.Day);
 				dlcDto.Cover = dlc.Cover;
 				//dlcDto.MaxPercent = dlc.MaxPercent;
@@ -190,7 +212,7 @@ namespace RGB.Back.Service
 					totalDiscountPercent = (double)game.MaxPercent / 100.0;
 				}
 
-				double dPrice = (double)(game.Price * totalDiscountPercent);
+				double? dPrice = game.Price * totalDiscountPercent;
 				return ((int)dPrice, (int)(totalDiscountPercent * 100.0));
 			}
 			else
@@ -281,9 +303,12 @@ namespace RGB.Back.Service
 
 			var rating = 0;
 
-			if (comments.Count == 0) { 
-				return 0; 
-			}else{
+			if (comments.Count == 0)
+			{
+				return 0;
+			}
+			else
+			{
 				foreach (var comment in comments)
 				{ rating += comment.Rating; }
 
@@ -309,7 +334,18 @@ namespace RGB.Back.Service
 				gameDto.Id = game.Id;
 				gameDto.Name = game.Name;
 				gameDto.Introduction = game.Introduction;
-				gameDto.Price = (int)game.Price;
+				if(game.Price == null)
+				{
+					gameDto.Price = null;
+				}
+				else if(game.Price == 0)
+				{
+					gameDto.Price = 0;
+				}
+				else
+				{
+					gameDto.Price = (int)game.Price;
+				}
 				gameDto.ReleaseDate = new DateTime(game.ReleaseDate.Year, game.ReleaseDate.Month, game.ReleaseDate.Day);
 				gameDto.Cover = game.Cover;
 				//gameDto.MaxPercent = game.MaxPercent;
@@ -329,7 +365,23 @@ namespace RGB.Back.Service
 
 			return gameList;
 		}
+
+		public GameDetailDTO GetMainGame(int dlcId)
+		{
+			var gameId = _context.Dlcs.AsNoTracking()
+				.Where(x => x.DlcId == dlcId)
+				.Select(x => x.MainGameId)
+				.FirstOrDefault();
+			if (gameId != 0)
+			{
+				return GetGameDetailByGameId(gameId);
+			}
+			else
+			{
+				return null;
+			}
+		}
+
+
 	}
-
-
 }

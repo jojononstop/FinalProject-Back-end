@@ -84,7 +84,7 @@ namespace RGB.Back.Service
             if (item != null)
             {
                 _cart.Items.Remove(item);
-            }
+			}
         }
 
         //public CartDTO GetCart()

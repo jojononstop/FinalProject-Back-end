@@ -11,32 +11,105 @@ using RGB.Back.Service;
 
 namespace RGB.Back.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class GamesController : ControllerBase
-    {
-        private readonly RizzContext _context;
-        private readonly GameService _service;
+	[Route("api/[controller]")]
+	[ApiController]
+	public class GamesController : ControllerBase
+	{
+		private readonly RizzContext _context;
+		private readonly GameService _service;
 
-        public GamesController(RizzContext context)
-        {
-            _context = context;
-            _service = new GameService(context);
-        }
-
-        // GET: api/Games
-        [HttpGet]
-        public async Task<IEnumerable<GameDetailDTO>> GetGames()
-        {
-            return _service.GetAllGameDetail();
+		public GamesController(RizzContext context)
+		{
+			_context = context;
+			_service = new GameService(context);
 		}
 
-        // GET: api/Games/5
-        [HttpGet("{id}")]
-        public async Task<GameDetailDTO> GetGame(int id)
-        {
-            var game = _service.GetGameDetailByGameId(id);
-            return game;
+		// GET: api/Games
+		[HttpGet]
+		public async Task<IEnumerable<GameDetailDTO>> GetGames()
+		{
+			var games = _service.GetAllGameDetail();
+			return games;
+		}
+
+		[HttpPost("popular")]
+		public async Task<IEnumerable<GameDetailDTO>> GetPopularGames(int begin, int end)
+		{
+			var gameIds = await _context.Collections
+					 .GroupBy(x => x.GameId) 
+					 .OrderByDescending(g => g.Count()) 
+					 .Select(g => g.Key) 
+					 .Skip(begin)
+					 .Take(end)
+					 .ToListAsync();
+
+			var gameDTOs = new List<GameDetailDTO>();
+			foreach (var id in gameIds)
+			{
+				var game = _service.GetGameDetailByGameId(id);
+				gameDTOs.Add(game);
+			}
+
+			return gameDTOs;
+		}
+
+		[HttpPost("Commend")]
+		public async Task<IEnumerable<int>> GetCommendGames(int memberId)
+		{
+			var gameIds = await _context.Collections
+					 .Where(x=> x.MemberId == memberId)
+					 .Select(x => x.GameId)
+					 .ToListAsync();
+
+			var tagList = new List<int>();
+			foreach (var id in gameIds)
+			{
+				var tags = await _context.GameTags
+					 .Where(x => x.GameId == id)
+					 .Select(g => g.TagId)
+					 .ToListAsync();
+				tagList.AddRange(tags);
+			}
+
+			var sortedTag = tagList
+			.GroupBy(x => x)
+			.OrderByDescending(g => g.Count())
+			.Select(g => g.Key)
+			.ToList();
+
+			var max = 6;
+			var i = 0;
+			var notEnughtNum = 6;
+			var commendGameList = new List<int>();
+
+			while (commendGameList.Count < max)
+			{
+				notEnughtNum = max - commendGameList.Count();
+
+				var commendGame = _context.GameTags.AsNoTracking()
+				.Where(x => x.TagId == sortedTag[i])
+				.Select(x => x.GameId)
+				.ToList();
+
+				var filteredCommendGame = commendGame.Except(gameIds).Except(commendGameList).ToList();
+
+				commendGameList.AddRange(filteredCommendGame.Take(notEnughtNum));
+
+				i++;
+			}
+			
+
+			return commendGameList;
+
+
+		}
+
+		// GET: api/Games/5
+		[HttpGet("{id}")]
+		public async Task<GameDetailDTO> GetGame(int id)
+		{
+			var game = _service.GetGameDetailByGameId(id);
+			return game;
 		}
 
 		// GET: api/Games/developer/5
@@ -48,8 +121,9 @@ namespace RGB.Back.Controllers
 		}
 
 		// POST: api/Games/FilterByTags
+		//public async Task<IEnumerable<GameDetailDTO>> FilterGamesByTags([FromBody] List<int> tagIds)
 		[HttpPost("FilterByTags")]
-		public async Task<IEnumerable<GameDetailDTO>> FilterGamesByTags([FromBody] List<int> tagIds)
+		public async Task<IEnumerable<GameDetailDTO>> FilterGamesByTags(List<int> tagIds)
 		{
 			var games = _service.GetGameDetailByTags(tagIds);
 			return games;
@@ -63,67 +137,47 @@ namespace RGB.Back.Controllers
 			return games;
 		}
 
-		// PUT: api/Games/5
-		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-		//[HttpPut("{id}")]
-		//public async Task<IActionResult> PutGame(int id, Game game)
-		//{
-		//    if (id != game.Id)
-		//    {
-		//        return BadRequest();
-		//    }
+		[HttpGet("dlc/{dlcId}")]
+		public async Task<GameDetailDTO> GetMainGame(int dlcId)
+		{
 
-		//    _context.Entry(game).State = EntityState.Modified;
+			var games = _service.GetMainGame(dlcId);
+			return games;
+		}
 
-		//    try
-		//    {
-		//        await _context.SaveChangesAsync();
-		//    }
-		//    catch (DbUpdateConcurrencyException)
-		//    {
-		//        if (!GameExists(id))
-		//        {
-		//            return NotFound();
-		//        }
-		//        else
-		//        {
-		//            throw;
-		//        }
-		//    }
+		[HttpGet("developerName/{developerId}")]
+		public string GetDeveloperName(int developerId)
+		{
+			return _context.Developers.AsNoTracking()
+				.Where(x => x.Id == developerId)
+				.Select(x => x.Name)
+				.FirstOrDefault();
+		}
 
-		//    return NoContent();
-		//}
+		[HttpGet("tag/{tagId}")]
+		public string GetTagName(int tagId)
+		{
+			var tag = _context.Tags.AsNoTracking()
+				.Where(x => x.Id == tagId)
+				.Select(x => x.Name)
+				.FirstOrDefault();
 
-		//// POST: api/Games
-		//// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-		//[HttpPost]
-		//public async Task<ActionResult<Game>> PostGame(Game game)
-		//{
-		//    _context.Games.Add(game);
-		//    await _context.SaveChangesAsync();
+			return tag;
+		}
 
-		//    return CreatedAtAction("GetGame", new { id = game.Id }, game);
-		//}
+		[HttpPost("AddToWishList")]
+		public Task<string> AddToWishList(WishListe wishListe)
+		{
+			try
+			{
+			_context.WishListes.Add(wishListe);
+			_context.SaveChanges();
+			return Task.FromResult("Success");
 
-		//// DELETE: api/Games/5
-		//[HttpDelete("{id}")]
-		//public async Task<IActionResult> DeleteGame(int id)
-		//{
-		//    var game = await _context.Games.FindAsync(id);
-		//    if (game == null)
-		//    {
-		//        return NotFound();
-		//    }
-
-		//    _context.Games.Remove(game);
-		//    await _context.SaveChangesAsync();
-
-		//    return NoContent();
-		//}
-
-		//private bool GameExists(int id)
-		//{
-		//    return _context.Games.Any(e => e.Id == id);
-		//}
+			}catch(Exception e)
+			{
+				return Task.FromResult(e.Message);
+			}
+		}
 	}
 }
