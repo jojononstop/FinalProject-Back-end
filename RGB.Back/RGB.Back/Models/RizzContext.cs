@@ -470,7 +470,7 @@ public partial class RizzContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PK_Orders_1");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
 
             entity.HasOne(d => d.Game).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.GameId)

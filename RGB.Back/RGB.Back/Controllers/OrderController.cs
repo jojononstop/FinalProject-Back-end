@@ -19,11 +19,11 @@ namespace RGB.Back.Controllers
         }
 
         // GET: api/Orders
-        [HttpGet]
-        public async Task<IEnumerable<Order>> GetOrders()
-        {
-            return _service.GetAll();
-        }
+        //[HttpGet]
+        //public async Task<IEnumerable<Order>> GetOrders()
+        //{
+        //    return _service.GetAll();
+        //}
 
         // GET: api/Orders/member/5
         [HttpGet("member/{memberId}")]
@@ -37,17 +37,6 @@ namespace RGB.Back.Controllers
         [HttpPost]
         public async Task<IActionResult> PostOrder(Order order)
         {
-            // 檢查訂單 ID 是否已存在
-            if (_context.Orders.Any(o => o.Id == order.Id))
-            {
-                return BadRequest("訂單 ID 已存在");
-            }
-
-            // 檢查遊戲 ID 是否已存在
-            if (_context.Orders.Any(o => o.GameId == order.GameId))
-            {
-                return BadRequest("遊戲 ID 已存在");
-            }
 
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
