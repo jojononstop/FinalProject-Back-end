@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Security.Cryptography;
 using System.Text;
+using static System.Net.WebRequestMethods;
 
 namespace RGB.Back.Service
 {
@@ -154,6 +155,7 @@ namespace RGB.Back.Service
 				//待加密
 				Password = encryptedpassword,
 				Mail = cmDto.Email,
+				//預設頭像
 				AvatarUrl = null,
 				RegistrationDate = DateTime.Now,
 				BanTime = null,
