@@ -73,8 +73,10 @@ namespace RGB.Back.Service
 
             return orders;
         }
-    
-                
-       
+
+        internal Task<bool> UserExistsAsync(int memberId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

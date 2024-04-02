@@ -15,10 +15,6 @@ public partial class Collection
 
     public int? MemberTagId { get; set; }
 
-    public int BillDetailId { get; set; }
-
-    public virtual BillDetail BillDetail { get; set; }
-
     public virtual Game Game { get; set; }
 
     public virtual Member Member { get; set; }

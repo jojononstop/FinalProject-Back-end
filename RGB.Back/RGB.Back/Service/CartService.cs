@@ -49,31 +49,31 @@ namespace RGB.Back.Service
         /// <param name="gameDetailDTO"></param>
         /// <param name="quantity"></param>
         /// <returns></returns>
-        public CartDTO TryAddToCart(GameDetailDTO gameDetailDTO, int quantity)
+        public CartDTO TryAddToCart(int gameId, int quantity)
         {
-            var item = _cart.Items.FirstOrDefault(i => i.GameId == gameDetailDTO.Id);
-            if (quantity <= 0)
-            {
-                RemoveFromCart(item.Id);
-                return _cart;
-            }
+            var item = _cart.Items.FirstOrDefault(i => i.GameId == gameId);
+            //if (quantity <= 0)
+            //{
+            //    RemoveFromCart(item.Id);
+            //    return _cart;
+            //}
             if (item == null)
             {
                 _cart.Items.Add(new Models.CartItem
                 {
                     Id = _cart.Items.Count == 0 ? 1 : _cart.Items.Max(i => i.Id) + 1,
-                    GameId = gameDetailDTO.Id,
-                    Qty = quantity
+                    GameId = gameId,
+                    //Qty = quantity
                 });
             }
             else
             {
-                item.Qty += quantity;
-                // 如果更新後數量<=0,則移除 
-                if (item.Qty <= 0)
-                {
-                    RemoveFromCart(item.Id);
-                }
+                //item.Qty += quantity;
+                //// 如果更新後數量<=0,則移除 
+                //if (item.Qty <= 0)
+                //{
+                //    RemoveFromCart(item.Id);
+                //}
             }
             return _cart;
         }
@@ -87,10 +87,10 @@ namespace RGB.Back.Service
             }
         }
 
-        public CartDTO GetCart()
-        {
-            return _cart;
-        }
+        //public CartDTO GetCart()
+        //{
+        //    return _cart;
+        //}
 
         public CartDTO GetCartById(int Id)
         {
@@ -101,7 +101,7 @@ namespace RGB.Back.Service
 
             cartDto.Id = Id;
             cartDto.memberId = Id;
-     
+
 
 
             // 將找到的購物車資料添加到 cartDto 中，如果找不到則維持 cartDto 為空

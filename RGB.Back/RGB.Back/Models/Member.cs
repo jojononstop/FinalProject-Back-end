@@ -45,17 +45,17 @@ public partial class Member
 
     public virtual ICollection<BanMember> BanMemberMember2s { get; set; } = new List<BanMember>();
 
-    public virtual ICollection<BillDetail> BillDetails { get; set; } = new List<BillDetail>();
-
     public virtual ICollection<Board> Boards { get; set; } = new List<Board>();
 
     public virtual ICollection<BonusItem> BonusItems { get; set; } = new List<BonusItem>();
 
-    public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
+    public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
 
     public virtual ICollection<Collection> Collections { get; set; } = new List<Collection>();
 
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
+
+    public virtual ICollection<EcpayOrder> EcpayOrders { get; set; } = new List<EcpayOrder>();
 
     public virtual ICollection<Friend> FriendMember1s { get; set; } = new List<Friend>();
 
@@ -64,6 +64,8 @@ public partial class Member
     public virtual ICollection<MemberTag> MemberTags { get; set; } = new List<MemberTag>();
 
     public virtual ICollection<Message> Messages { get; set; } = new List<Message>();
+
+    public virtual Order Order { get; set; }
 
     public virtual ICollection<Picture> Pictures { get; set; } = new List<Picture>();
 
