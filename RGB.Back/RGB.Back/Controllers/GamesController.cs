@@ -66,27 +66,42 @@ namespace RGB.Back.Controllers
 			{
 				var tags = await _context.GameTags
 					 .Where(x => x.GameId == id)
-					 .Select(g => g.GameId)
+					 .Select(g => g.TagId)
 					 .ToListAsync();
 				tagList.AddRange(tags);
 			}
 
-			//var gameIds = await _context.Collections
-			//		 .GroupBy(x => x.GameId)
-			//		 .OrderByDescending(g => g.Count())
-			//		 .Select(g => g.Key)
-			//		 .Take(6)
-			//		 .ToListAsync();
+			var sortedTag = tagList
+			.GroupBy(x => x)
+			.OrderByDescending(g => g.Count())
+			.Select(g => g.Key)
+			.ToList();
 
-			//var gameDTOs = new List<GameDetailDTO>();
-			//foreach (var id in gameIds)
-			//{
-			//	var game = _service.GetGameDetailByGameId(id);
-			//	gameDTOs.Add(game);
-			//}
+			var max = 6;
+			var i = 0;
+			var notEnughtNum = 6;
+			var commendGameList = new List<int>();
 
-			//return gameDTOs;
-			return tagList;
+			while (commendGameList.Count < max)
+			{
+				notEnughtNum = max - commendGameList.Count();
+
+				var commendGame = _context.GameTags.AsNoTracking()
+				.Where(x => x.TagId == sortedTag[i])
+				.Select(x => x.GameId)
+				.ToList();
+
+				var filteredCommendGame = commendGame.Except(gameIds).Except(commendGameList).ToList();
+
+				commendGameList.AddRange(filteredCommendGame.Take(notEnughtNum));
+
+				i++;
+			}
+			
+
+			return commendGameList;
+
+
 		}
 
 		// GET: api/Games/5

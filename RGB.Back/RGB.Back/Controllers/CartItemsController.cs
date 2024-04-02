@@ -59,6 +59,13 @@ namespace RGB.Back.Controllers
 
 		}
 
+        [HttpPost("check")]
+		public async Task<bool> CheckIsAlreadyHave(int memberId, int gameId)
+		{
+            return _context.Collections.AsNoTracking()
+                .Any(x => x.MemberId == memberId && x.GameId == gameId);
+		}
+
 		private bool CartItemExists(int id)
         {
             return _context.CartItems.Any(e => e.Id == id);
