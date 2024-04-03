@@ -15,5 +15,5 @@ public partial class Order
 
     public virtual Game Game { get; set; }
 
-    public virtual Member IdNavigation { get; set; }
+    public virtual Member Member { get; set; }
 }

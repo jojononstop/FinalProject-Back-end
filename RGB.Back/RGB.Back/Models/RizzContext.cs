@@ -231,8 +231,6 @@ public partial class RizzContext : DbContext
 
         modelBuilder.Entity<Collection>(entity =>
         {
-            entity.Property(e => e.Id).ValueGeneratedNever();
-
             entity.HasOne(d => d.Game).WithMany(p => p.Collections)
                 .HasForeignKey(d => d.GameId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -423,7 +421,6 @@ public partial class RizzContext : DbContext
                 .HasMaxLength(200)
                 .HasColumnName("AvatarURL");
             entity.Property(e => e.BanTime).HasColumnType("datetime");
-            entity.Property(e => e.Birthday).HasColumnType("datetime");
             entity.Property(e => e.ConfirmCode).HasMaxLength(256);
             entity.Property(e => e.Google).HasMaxLength(256);
             entity.Property(e => e.LastLoginDate).HasColumnType("datetime");
@@ -472,15 +469,13 @@ public partial class RizzContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PK_Orders_1");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
-
             entity.HasOne(d => d.Game).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.GameId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Orders_Games");
 
-            entity.HasOne(d => d.IdNavigation).WithOne(p => p.Order)
-                .HasForeignKey<Order>(d => d.Id)
+            entity.HasOne(d => d.Member).WithMany(p => p.Orders)
+                .HasForeignKey(d => d.MemberId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Orders_Members");
         });
