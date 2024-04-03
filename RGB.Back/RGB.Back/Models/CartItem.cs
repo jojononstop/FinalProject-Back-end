@@ -9,17 +9,11 @@ public partial class CartItem
 {
     public int Id { get; set; }
 
+    public int MemberId { get; set; }
+
     public int GameId { get; set; }
 
-    public int Qty { get; set; }
+    public virtual Game IdNavigation { get; set; }
 
-    public int CartId { get; set; }
-
-    public decimal UnitPrice { get; set; }
-
-    public decimal Total { get; set; }
-
-    public virtual Game Id1 { get; set; }
-
-    public virtual Cart IdNavigation { get; set; }
+    public virtual Member Member { get; set; }
 }

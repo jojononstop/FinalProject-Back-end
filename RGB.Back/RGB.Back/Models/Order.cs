@@ -11,19 +11,9 @@ public partial class Order
 
     public int MemberId { get; set; }
 
-    public string PaymentMethod { get; set; }
+    public int GameId { get; set; }
 
-    public int TotalAmount { get; set; }
+    public virtual Game Game { get; set; }
 
-    public string Status { get; set; }
-
-    public int? DiscountAmount { get; set; }
-
-    public string Message { get; set; }
-
-    public DateTime OrderDate { get; set; }
-
-    public virtual Member IdNavigation { get; set; }
-
-    public virtual OderDetail OderDetail { get; set; }
+    public virtual Member Member { get; set; }
 }
