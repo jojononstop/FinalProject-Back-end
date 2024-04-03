@@ -40,8 +40,8 @@ namespace RGB.Back.Service
                                                     Id = m.Id,
                                                     sender_id = m.SenderId,
                                                     receiver_id = m.ReceiveId,
-                                                    Message = m.Content,
-                                                    SendTime = m.Time,
+                                                    Content = m.Content,
+                                                    Time = m.Time,
                                                     isRead = m.Isread
                                                 }).ToListAsync();
 
@@ -59,8 +59,8 @@ namespace RGB.Back.Service
              
                 sender_id = senderId,
                 receiver_id = receiveId,
-                Message = data,
-                SendTime = DateTime.Now,
+                Content = data,
+                Time = DateTime.Now,
                 isRead = 1
             };
             return messageDto;
@@ -80,16 +80,8 @@ namespace RGB.Back.Service
             _context.ChatMessages.Add(message);
             _context.SaveChanges();
 
-            var messageDto = new ChatMessageDto
-            {
-                Id = message.Id,
-                sender_id = message.SenderId,
-                receiver_id = message.ReceiveId,
-                Message = message.Content,
-                SendTime = message.Time,
-                isRead = message.Isread
-            };
-            return messageDto;
+         
+            return message;
         }
     }
 }

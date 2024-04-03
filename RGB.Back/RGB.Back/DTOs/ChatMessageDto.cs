@@ -7,8 +7,8 @@ namespace RGB.Back.DTOs
         public int Id { get; set; }
         public int sender_id { get; set; }
         public int receiver_id { get; set; }
-        public string Message { get; set; }
-        public DateTime? SendTime { get; set; }
+        public string Content { get; set; }
+        public DateTime? Time { get; set; }
         public byte? isRead { get; set; }
 
     }

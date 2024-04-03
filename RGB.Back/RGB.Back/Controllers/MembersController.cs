@@ -239,7 +239,7 @@ namespace RGB.Back.Controllers
 		[HttpPost("GoogleId")]
 		public async Task<List<string>> ValidGoogleId(string googleId)
 		{
-			Member member = _context.Members.FirstOrDefault(m => m.Google == googleId);
+			Member member =  _context.Members.FirstOrDefault(m => m.Google == googleId);
 			if (member == null) {
 				List<string> errors = new List<string>();
 				errors.Add("新的google帳號");

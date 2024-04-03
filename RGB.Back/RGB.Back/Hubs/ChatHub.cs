@@ -25,15 +25,17 @@ namespace RGB.Back.Hubs
             var id = Context.ConnectionId;
 
             var userId = Context.GetHttpContext().Request.Query["userId"];
+            var userName = Context.GetHttpContext().Request.Query["userName"];
 
-            _logger.LogInformation($"客戶端id={id},連接服務端,使用者 ID={userId}");
+            _logger.LogInformation($"客戶端id={id},連接服務端,使用者 ID={userId},名稱={userName}");
 
             // 取得上線的使用者
             var onlineUser = new UserInfoDto 
             {
                 UserId = int.Parse(userId),
                 ConnectionId = id,
-                LastLoginTime = DateTime.Now
+                LastLoginTime = DateTime.Now,
+                UserName = userName
                 
             }; // 假設 UserInfoDto 有一個 ConnectionId 屬性表示連接ID
             OnlineUsers.Add(onlineUser);
@@ -62,9 +64,14 @@ namespace RGB.Back.Hubs
 
         public async Task SendMessageToFriend(int senderId, int receiveId, string friendConnectionId ,string message)
         {
-           
-            await Clients.Caller.SendMessageTo(_service.SendCaller(senderId, receiveId, message));
-            await Clients.Client(friendConnectionId).SendMessageTo(_service.SendMessageToFriend(senderId, receiveId, message));
+            var returnMessage = _service.SendMessageToFriend(senderId, receiveId, message);
+            await Clients.Caller.SendMessageTo(returnMessage);
+            await Clients.Client(friendConnectionId).SendMessageTo(returnMessage);
+        }
+
+        public async Task AddFriendRequset(int senderId, int receiveId)
+        {
+            
         }
 
 
