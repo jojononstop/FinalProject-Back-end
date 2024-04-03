@@ -25,15 +25,15 @@ namespace RGB.Back.Controllers
         }
 
         // GET: api/BonusProducts
-        //GetAll
+        // GetAll 取得全部商品
         [HttpGet]
         public async Task<List<BonusProduct>> GetAllBonusProductAsync()
         {
             return await _context.BonusProducts.ToListAsync();
         }
 
-        //GET: api/BonusProductsType
-        //GetAllType
+        // GET: api/BonusProductsType
+        // GetAllType 取得全部類型
         [HttpGet("Type")]
         public async Task<List<BonusProductType>> GetAllBonusProductTypeAsync()
         {
@@ -41,7 +41,7 @@ namespace RGB.Back.Controllers
         }
 
         // GET: api/BonusProducts/5
-        // GetById
+        // GetById 以Id搜尋商品
         [HttpGet("{id}")]
         public async Task<BonusDto> GetBonusProductAsync(int id)
         {
@@ -49,23 +49,39 @@ namespace RGB.Back.Controllers
         }
 
         // GET: api/BonusProducts/MemberId/5
-        //GetByMember
+        // GetByMember 以會員搜尋商品
         [HttpGet("MemberId/{memberId}")]
         public async Task<List<MemberBonusItemDto>> GetBonusProductByMemberAsync(int memberId)
         {
             return await _service.GetBonusProductByMemberAsync(memberId);
         }
 
-        //GET: api/BonusProducts/Type/5
-        //GetByType
+        // GET: api/BonusProducts/MemberId/5
+        // GetByMember 變更會員蒐藏庫使用狀態
+        [HttpPost("update")]
+        public async Task<IActionResult> UpdateMemberBonusItemAsync(int memberId, int bonusId, bool usingStatus)
+        {
+            try
+            {
+                await _service.UpdateMemberBonusItemAsync(memberId, bonusId, usingStatus);
+                return Ok("BonusItem updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        // GET: api/BonusProducts/Type/5
+        // GetByType 以類型搜尋商品
         [HttpGet("Type/{typeId}")]
         public async Task<List<BonusDto>> GetBonusProductByTypeAsync(int typeId)
         {
             return await _service.GetBonusProductByTypeAsync(typeId);
         }
 
-        //GET: api/BonusProducts/Name/5
-        //GetByName
+        // GET: api/BonusProducts/Name/5
+        // GetByName 以名稱搜尋商品
         [HttpGet("Name/{name}")]
         public async Task<List<BonusDto>> GetBonusProductByNameAsync(string name)
         {
@@ -73,7 +89,7 @@ namespace RGB.Back.Controllers
         }
 
         // POST: api/BonusProducts/5
-        // Add Product To BonusItem - PostBonusProductToBonusItem
+        // Add Product To BonusItem 新增商品到資料庫
         [HttpPost("{id}")]
         public async Task<IActionResult> PostBonusProductToBonusItem(int id, int memberId)
         {
@@ -85,7 +101,7 @@ namespace RGB.Back.Controllers
                 return NotFound("會員不存在");
             }
 
-            // 取得商品
+            // 取得商品ll;
             var bonusProduct = await _context.BonusProducts.FindAsync(id);
             if (bonusProduct == null)
             {
@@ -104,69 +120,5 @@ namespace RGB.Back.Controllers
             // 返回200 OK
             return Ok(bonusProduct.Id);
         }
-
-        #region 使用不到的PUT與POST
-        // PUT: api/BonusProducts/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutBonusProduct(int id, BonusProduct bonusProduct)
-        //{
-        //    if (id != bonusProduct.Id)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    _context.Entry(bonusProduct).State = EntityState.Modified;
-
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!BonusProductExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return NoContent();
-        //}
-
-        // POST: api/BonusProducts
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPost]
-        //public async Task<ActionResult<BonusProduct>> PostBonusProduct(BonusProduct bonusProduct)
-        //{
-        //    _context.BonusProducts.Add(bonusProduct);
-        //    await _context.SaveChangesAsync();
-
-        //    return CreatedAtAction("GetBonusProduct", new { id = bonusProduct.Id }, bonusProduct);
-        //}
-
-        // DELETE: api/BonusProducts/5
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteBonusProduct(int id)
-        //{
-        //    var bonusProduct = await _context.BonusProducts.FindAsync(id);
-        //    if (bonusProduct == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    _context.BonusProducts.Remove(bonusProduct);
-        //    await _context.SaveChangesAsync();
-
-        //    return NoContent();
-        //}
-        //private bool BonusProductExists(int id)
-        //{
-        //    return _context.BonusProducts.Any(e => e.Id == id);
-        //}
-        #endregion
     }
 }
