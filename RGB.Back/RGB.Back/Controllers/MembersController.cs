@@ -153,17 +153,13 @@ namespace RGB.Back.Controllers
 		// PUT: api/Members/5
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		[HttpGet("{id}")]
-		public async Task<EditMemberDTO> GetMemberData(string id)
+		public async Task<string> GetMemberData(string id)
 		{
 			var unprotectId = _dataProtector.Unprotect(id);
 			var member = _context.Members.Find(Convert.ToInt32(unprotectId));
-			var datadto = new EditMemberDTO
-			{
-				NickName = member.NickName,
-				Birthday = member.Birthday
-			};
+
 			//         return "編輯成功";
-			return datadto;
+			return member.NickName;
 		}
 
 
