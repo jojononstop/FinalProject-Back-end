@@ -25,7 +25,7 @@ public partial class Member
 
     public DateTime LastLoginDate { get; set; }
 
-    public DateTime? Birthday { get; set; }
+    public DateOnly? Birthday { get; set; }
 
     public string NickName { get; set; }
 
@@ -49,11 +49,13 @@ public partial class Member
 
     public virtual ICollection<BonusItem> BonusItems { get; set; } = new List<BonusItem>();
 
-    public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
+    public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
 
     public virtual ICollection<Collection> Collections { get; set; } = new List<Collection>();
 
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
+
+    public virtual ICollection<EcpayOrder> EcpayOrders { get; set; } = new List<EcpayOrder>();
 
     public virtual ICollection<Friend> FriendMember1s { get; set; } = new List<Friend>();
 
@@ -63,7 +65,7 @@ public partial class Member
 
     public virtual ICollection<Message> Messages { get; set; } = new List<Message>();
 
-    public virtual Order Order { get; set; }
+    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
     public virtual ICollection<Picture> Pictures { get; set; } = new List<Picture>();
 

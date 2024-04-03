@@ -20,7 +20,7 @@
 
 		public DateTime LastLoginDate { get; set; }
 
-		public DateTime? Birthday { get; set; }
+		public DateOnly? Birthday { get; set; }
 
 		public string NickName { get; set; }
 	}

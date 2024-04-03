@@ -37,7 +37,7 @@ namespace RGB.Back
 							});
 
             builder.Services.AddScoped<ChatService>();
-            builder.Services.AddScoped<CartService>();
+            //builder.Services.AddScoped<CartService>();
             //builder.Services.AddScoped<GameService>();
 
 

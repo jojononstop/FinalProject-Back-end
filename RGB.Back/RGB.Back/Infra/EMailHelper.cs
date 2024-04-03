@@ -7,7 +7,8 @@ namespace RGB.Back.Infra
 {
 	public class EMailHelper
 	{
-		private string senderEmail = "g01.webapp@gmail.com"; // 寄件者
+		//private string senderEmail = "g01.webapp@gmail.com"; // 寄件者
+		private string senderEmail = "rizzgamingbase@gmail.com"; // 寄件者
 
 		public void SendForgetPasswordEmail(string url, string name, string email)
 		{

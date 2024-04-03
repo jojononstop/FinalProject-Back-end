@@ -152,34 +152,35 @@ namespace RGB.Back.Controllers
 
 		// PUT: api/Members/5
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+		[HttpGet("{id}")]
+		public async Task<EditMemberDTO> GetMemberData(string id)
+		{
+			var unprotectId = _dataProtector.Unprotect(id);
+			var member = _context.Members.Find(Convert.ToInt32(unprotectId));
+			var datadto = new EditMemberDTO
+			{
+				NickName = member.NickName,
+				Birthday = member.Birthday
+			};
+			//         return "編輯成功";
+			return datadto;
+		}
+
+
+
+
 		//修改
 		[HttpPut("{id}")]
-        public async Task<string> EditMember(int id, MemberDTO memberdto)
+
+
+		public async Task<string> EditMember(string id, EditMemberDTO Editdto)
         {
-            if (id != memberdto.Id)
-            {
-                return "編輯失敗";
-            }
+			var unprotectId = _dataProtector.Unprotect(id);
 
-            _context.Entry(memberdto).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!MemberExists(id))
-                {
-                    return "編輯失敗";
-                }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return "編輯成功";
+   //         return "編輯成功";
+              return unprotectId;
         }
 
         // POST: api/Members
@@ -368,10 +369,7 @@ namespace RGB.Back.Controllers
 		public async Task<string> test2(string word)
 		{
 
-
-
 			return _service.test2(word);
-
 
 		}
 
