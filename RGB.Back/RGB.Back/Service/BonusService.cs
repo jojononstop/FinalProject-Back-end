@@ -212,6 +212,11 @@ namespace RGB.Back.Service
                 var memberBonusItemDto = new MemberBonusItemDto
                 {
                     Id = item.Id,
+                    ProductTypeId = item.Bonus.ProductType.Id,
+                    ProductTypeName = item.Bonus.ProductType.Name,
+                    Price = item.Bonus.Price,
+                    URL = item.Bonus.Url,
+                    Name = item.Bonus.Name,
                     MemberId = item.MemberId,
                     BonusId = item.BonusId,
                     ProductType = item.Bonus.ProductType.Id,
