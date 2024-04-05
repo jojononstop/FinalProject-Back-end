@@ -13,8 +13,8 @@ namespace RGB.Back.Service
             client = new HttpClient();
         }
 
-        private readonly string channelId = "1657306405";
-        private readonly string channelSecretKey = "720c8af4d271ce2fef3535b8821d9e8e";
+        private readonly string channelId = "2004206463";
+        private readonly string channelSecretKey = "49091db6c0a36cab3de426701a5c4d33";
 
 
         private readonly string linePayBaseApiUrl = "https://sandbox-api-pay.line.me";

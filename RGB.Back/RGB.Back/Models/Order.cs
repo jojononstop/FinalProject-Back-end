@@ -13,6 +13,8 @@ public partial class Order
 
     public int GameId { get; set; }
 
+    public DateOnly OrderDate { get; set; }
+
     public virtual Game Game { get; set; }
 
     public virtual Member IdNavigation { get; set; }

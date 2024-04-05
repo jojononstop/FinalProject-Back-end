@@ -36,8 +36,8 @@ namespace RGB.Back.Service
 			memberDto.BanTime = member.BanTime;
 			memberDto.Bonus = member.Bonus;
 			memberDto.LastLoginDate = member.LastLoginDate;
-			memberDto.Birthday = member.Birthday;
-			memberDto.NickName = member.NickName;
+            //memberDto.Birthday = member.Birthday;
+            memberDto.NickName = member.NickName;
 
 			return memberDto;
 		}

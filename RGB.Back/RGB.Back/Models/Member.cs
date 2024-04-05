@@ -25,7 +25,7 @@ public partial class Member
 
     public DateTime LastLoginDate { get; set; }
 
-    public DateTime? Birthday { get; set; }
+    public DateOnly? Birthday { get; set; }
 
     public string NickName { get; set; }
 
@@ -60,6 +60,10 @@ public partial class Member
     public virtual ICollection<Friend> FriendMember1s { get; set; } = new List<Friend>();
 
     public virtual ICollection<Friend> FriendMember2s { get; set; } = new List<Friend>();
+
+    public virtual ICollection<FriendRequest> FriendRequestReceives { get; set; } = new List<FriendRequest>();
+
+    public virtual ICollection<FriendRequest> FriendRequestSenders { get; set; } = new List<FriendRequest>();
 
     public virtual ICollection<MemberTag> MemberTags { get; set; } = new List<MemberTag>();
 
