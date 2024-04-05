@@ -34,8 +34,14 @@ namespace RGB.Back.Controllers
         [HttpPost]
         public async Task PostCartItem(CartItem cartItem)
         {
-            _context.CartItems.Add(cartItem);
-            await _context.SaveChangesAsync();
+            var sameItem =_context.CartItems.Where(x=> x.GameId == cartItem.GameId && x.MemberId == cartItem.MemberId);
+            
+            if(sameItem.Any() == false)
+            {
+                _context.CartItems.Add(cartItem);
+                await _context.SaveChangesAsync();
+            } 
+           
         }
 
         // DELETE: api/CartItems/5
