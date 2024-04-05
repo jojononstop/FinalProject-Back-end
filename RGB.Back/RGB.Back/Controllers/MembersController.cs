@@ -14,6 +14,8 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using System.Security.Cryptography;
 using RGB.Back.Infra;
+using System.Runtime.Intrinsics.X86;
+using Microsoft.CodeAnalysis.Elfie.Diagnostics;
 
 
 
@@ -153,34 +155,107 @@ namespace RGB.Back.Controllers
 		// PUT: api/Members/5
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		[HttpGet("{id}")]
-		public async Task<EditMemberDTO> GetMemberData(string id)
+		public async Task<CheckMemberDTO> GetMemberData(string id)
 		{
 			var unprotectId = _dataProtector.Unprotect(id);
 			var member = _context.Members.Find(Convert.ToInt32(unprotectId));
-			var datadto = new EditMemberDTO
+			string originalDateTime = member.RegistrationDate.ToString();
+			DateTime dateTime = DateTime.Parse(originalDateTime);
+
+			string formattedDate = dateTime.ToString("yyyy-MM-dd");
+
+			var dto = new CheckMemberDTO
 			{
-				NickName = member.NickName,
-				Birthday = member.Birthday
+				RegistrationDate = formattedDate,
+				NickName = member.NickName
 			};
 			//         return "編輯成功";
-			return datadto;
+			return dto;
 		}
 
+
+		//免密碼信發送
+		[HttpPost("noPassword")]
+		public async Task<string> NoPassword(string account)
+		{
+
+			var member = _context.Members.FirstOrDefault(m => m.Account == account);
+			string Message = "已向您的郵箱發送信件,請查看郵箱完成登入";
+			if(member == null)
+			{
+				Message = "帳號錯誤";
+
+			}
+			else
+			{
+				var confirmCode = Guid.NewGuid().ToString("N");
+				member.ConfirmCode = confirmCode;
+				_context.SaveChanges();
+				var urlTemplate = "http" + "://" +  // 生成 http:.// 或 https://
+	"localhost:3000" + "/" + // 生成網域名稱或 ip
+	"Id={0}" + "/" +
+	"LoginconfirmCode={1}";
+				var url = string.Format(urlTemplate, member.Id, member.ConfirmCode);
+				string name = account; // 請確認您的 CreateMemberDTO 類中是否包含了名稱（Name）和電子郵件（EMail）屬性
+				string email = member.Mail;
+				new EMailHelper().SendNoPasswordLoginEmail(url, name, email);
+			}
+
+
+			return Message;
+		}
+
+
+
+		//免密碼登入
+		[HttpPost("noPasswordLogin")]
+		public async Task<List<string>> NoPasswordLogin(ActiveDTO dto)
+		{
+
+			var member = _context.Members.FirstOrDefault(m=>m.Id== Convert.ToInt32(dto.Id) && m.ConfirmCode ==dto.confirmCode);
+			string sussceMessage = "登入成功";
+			if (member == null)
+			{
+				List<string> message = new List<string>();
+				message.Add("連結已失效");
+				return message;
+			}
+			else
+			{
+				member.ConfirmCode = null; // 清空 confirm code 欄位
+				//_context.SaveChanges();
+			};
+
+			
+			List<string> sussce = new List<string>();
+
+			var protectId = _dataProtector.Protect(member.Id.ToString());
+			sussce.Add(sussceMessage);
+			sussce.Add(protectId);
+			sussce.Add(member.AvatarUrl);
+			sussce.Add(member.Bonus.ToString());
+			sussce.Add(member.NickName);
+			sussce.Add(member.Id.ToString());
+
+			return sussce;
+		}
 
 
 
 		//修改
 		[HttpPut("{id}")]
-
-
-		public async Task<string> EditMember(string id, EditMemberDTO Editdto)
+		public async Task<string> EditMember(string id , string nickName)
         {
-			var unprotectId = _dataProtector.Unprotect(id);
+			var unprotectId = _dataProtector.Unprotect( id);
 
+			var member = _context.Members.Find(Convert.ToInt32(unprotectId));
 
+			member.NickName = nickName;
+
+			_context.SaveChanges();
 
    //         return "編輯成功";
-              return unprotectId;
+              return member.NickName;
         }
 
         // POST: api/Members

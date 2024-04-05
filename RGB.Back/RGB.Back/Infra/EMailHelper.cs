@@ -37,6 +37,21 @@ namespace RGB.Back.Infra
 
 		}
 
+		public void SendNoPasswordLoginEmail(string url, string name, string email)
+		{
+			var subject = "[免密碼登入]";
+			var body = $@"Hi {name},
+<br />
+請點擊此連結 [<a href='{url}' target='_blank'>進行登入</a>], 如果您沒有提出申請, 請忽略本信, 謝謝";
+
+			var from = senderEmail;
+			var to = email;
+
+			SendViaGoogle(from, to, subject, body);
+
+		}
+
+
 		public virtual void SendViaGoogle(string from, string to, string subject, string body)
 		{
 			// 讀取 Gmail 帳號和應用程式密碼

@@ -2,7 +2,8 @@
 {
 	public class EditMemberDTO
 	{
-		public string NickName { get; set; }
-		public DateOnly? Birthday { get; set; }
+		public string id { get; set; }
+		public string nickName { get; set; }
+		//public DateOnly? birthday { get; set; }
 	}
 }
