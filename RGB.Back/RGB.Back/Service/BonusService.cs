@@ -132,6 +132,23 @@ namespace RGB.Back.Service
             return DBToBonusDto(bonusProducts);
         }
 
+        // Get Bonus Product Name By MemberId
+        public async Task<List<MemberBonusItemDto>> GetBonusProductByMemberIdAsync(int memberId, string bonusProductName)
+        {
+            if (string.IsNullOrEmpty(bonusProductName))
+            {
+                return new List<MemberBonusItemDto>();
+            }
+
+            var bonusItem = await _context.BonusItems
+                .AsNoTracking()
+                .Where(x => x.Bonus.Name.ToLower().Contains(bonusProductName.ToLower()) &&  x.MemberId==memberId)
+                .Include(bp => bp.Bonus.ProductType)
+                .ToListAsync();
+            return DBToBonusDto(bonusItem);
+        }
+
+
         // Get User
         // 搜尋會員
         public async Task<bool> UserExistsAsync(int memberId)
@@ -225,6 +242,31 @@ namespace RGB.Back.Service
                 bonusItemList.Add(memberBonusItemDto);
             }
             return bonusItemList;
+        }
+
+        //DB To UserBonusItemByMemberDto
+        private List<MemberBonusItemDto> DBToBonusDto(List<BonusItem> bonusItems)
+        {
+            var bonusItemByMemberList = new List<MemberBonusItemDto>();
+
+            foreach (var item in bonusItems)
+            {
+                var MemberBonusItemDto = new MemberBonusItemDto
+                {
+                    Id = item.Id,
+                    ProductTypeId = item.Bonus.ProductType.Id,
+                    ProductTypeName = item.Bonus.ProductType.Name,
+                    Price = item.Bonus.Price,
+                    URL = item.Bonus.Url,
+                    Name = item.Bonus.Name,
+                    MemberId = item.MemberId,
+                    BonusId = item.BonusId,
+                    ProductType = item.Bonus.ProductType.Id,
+                    Using = item.Using
+                };
+                bonusItemByMemberList.Add(MemberBonusItemDto);
+            }
+            return bonusItemByMemberList;
         }
     }
 }
