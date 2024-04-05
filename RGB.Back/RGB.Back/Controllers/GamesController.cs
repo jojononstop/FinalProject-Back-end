@@ -106,7 +106,7 @@ namespace RGB.Back.Controllers
 		// GET: api/Games/5
 		[HttpGet("{id}")]
 		public GameDetailDTO GetGame(int id)
-		{  
+		{
 			var game = _service.GetGameDetailByGameId(id);
 			return game;
 		}
