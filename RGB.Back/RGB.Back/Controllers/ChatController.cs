@@ -51,5 +51,29 @@ namespace RGB.Back.Controllers
             return messages;
         }
 
+        [HttpPost("AddFriendRequest", Name = "AddFriendRequest")]
+        public async Task<IActionResult>  AddFriendRequest(int memberId, int friendId)
+        {
+           
+            await _service.AddFriend(memberId, friendId);   
+            
+            return Ok("已發送好友邀請");
+        }
+
+        [HttpGet("GetFriendRequests", Name = "GetFriendRequests")]
+        public async Task<List<FriendRequestDto>> GetFriendRequests(int memberId)
+        {
+            var requests = await _service.GetFriendRequests(memberId);
+            return requests;
+        }
+
+        [HttpPut("{id}/accept")]
+        public async Task<IActionResult> AcceptFriendRequest(int senderId, int receiveId)
+        {
+            await _service.AcceptFriendRequest(senderId, receiveId);
+            return Ok("已接受好友邀請");
+        }
+
+
     }
 }

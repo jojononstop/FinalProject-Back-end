@@ -49,6 +49,8 @@ public partial class RizzContext : DbContext
 
     public virtual DbSet<Friend> Friends { get; set; }
 
+    public virtual DbSet<FriendRequest> FriendRequests { get; set; }
+
     public virtual DbSet<Game> Games { get; set; }
 
     public virtual DbSet<GameTag> GameTags { get; set; }
@@ -361,6 +363,23 @@ public partial class RizzContext : DbContext
                 .HasForeignKey(d => d.Member2Id)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Friends_Members1");
+        });
+
+        modelBuilder.Entity<FriendRequest>(entity =>
+        {
+            entity.ToTable("FriendRequest");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+
+            entity.HasOne(d => d.Receive).WithMany(p => p.FriendRequestReceives)
+                .HasForeignKey(d => d.ReceiveId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_FriendRequest_Members1");
+
+            entity.HasOne(d => d.Sender).WithMany(p => p.FriendRequestSenders)
+                .HasForeignKey(d => d.SenderId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_FriendRequest_Members");
         });
 
         modelBuilder.Entity<Game>(entity =>

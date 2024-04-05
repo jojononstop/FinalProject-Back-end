@@ -61,6 +61,10 @@ public partial class Member
 
     public virtual ICollection<Friend> FriendMember2s { get; set; } = new List<Friend>();
 
+    public virtual ICollection<FriendRequest> FriendRequestReceives { get; set; } = new List<FriendRequest>();
+
+    public virtual ICollection<FriendRequest> FriendRequestSenders { get; set; } = new List<FriendRequest>();
+
     public virtual ICollection<MemberTag> MemberTags { get; set; } = new List<MemberTag>();
 
     public virtual ICollection<Message> Messages { get; set; } = new List<Message>();

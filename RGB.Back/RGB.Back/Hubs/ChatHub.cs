@@ -69,12 +69,6 @@ namespace RGB.Back.Hubs
             await Clients.Client(friendConnectionId).SendMessageTo(returnMessage);
         }
 
-        public async Task AddFriendRequset(int senderId, int receiveId)
-        {
-            
-        }
-
-
-
+        
     }
 }

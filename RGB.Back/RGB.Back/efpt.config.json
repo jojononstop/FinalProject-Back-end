@@ -2,6 +2,7 @@
    "CodeGenerationMode": 4,
    "ContextClassName": "RizzContext",
    "ContextNamespace": null,
+   "DefaultDacpacSchema": null,
    "FilterSchemas": false,
    "IncludeConnectionString": false,
    "ModelNamespace": null,
@@ -83,6 +84,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[FriendRequest]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[Friends]",
          "ObjectType": 0
       },
@@ -139,7 +144,7 @@
          "ObjectType": 0
       }
    ],
-   "UiHint": null,
+   "UiHint": "sparkle\\sql2024.Rizz.dbo",
    "UncountableWords": null,
    "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": false,
