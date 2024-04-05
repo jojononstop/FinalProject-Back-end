@@ -88,6 +88,14 @@ namespace RGB.Back.Controllers
             return await _service.GetBonusProductByNameAsync(name.ToLower());
         }
 
+        // GET: api/BonusProducts/Name/5/MemberId/5
+        // GetByName and GetByMemberId 以名稱及使用者ID搜尋商品
+        [HttpGet("Name/{bonusProductName}/MemberId/{memberId}")]
+        public async Task<List<MemberBonusItemDto>> GetBonusProductByMemberIdAsync(int memberId, string bonusProductName)
+        {
+            return await _service.GetBonusProductByMemberIdAsync(memberId, bonusProductName.ToLower());
+        }
+
         // POST: api/BonusProducts/5
         // Add Product To BonusItem 新增商品到資料庫
         [HttpPost("{id}")]
