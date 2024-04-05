@@ -39,6 +39,7 @@ namespace RGB.Back.Service
 					{
 						MemberId = memberId,
 						GameId = gameId,
+						OrderDate = DateOnly.FromDateTime(DateTime.Now),
 					};
 
 					// 添加到資料庫
