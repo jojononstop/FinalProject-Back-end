@@ -1,111 +1,191 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Threading.Tasks;
-//using Microsoft.AspNetCore.Http;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
-//using RGB.Back.DTOs;
-//using RGB.Back.Models;
-//using RGB.Back.Service;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Elfie.Model.Index;
+using Microsoft.EntityFrameworkCore;
+using RGB.Back.DTOs;
+using RGB.Back.Models;
+using RGB.Back.Service;
 
-//namespace RGB.Back.Controllers
-//{
-//	[Route("api/[controller]")]
-//	[ApiController]
-//	public class GamesController : ControllerBase
-//	{
-//		private readonly RizzContext _context;
-//		private readonly GameService _service;
+namespace RGB.Back.Controllers
+{
+	[Route("api/[controller]")]
+	[ApiController]
+	public class GamesController : ControllerBase
+	{
+		private readonly RizzContext _context;
+		private readonly GameService _service;
 
-//		public GamesController(RizzContext context)
-//		{
-//			_context = context;
-//			_service = new GameService(context);
-//		}
+		public GamesController(RizzContext context)
+		{
+			_context = context;
+			_service = new GameService(context);
+		}
 
-//		// GET: api/Games
-//		[HttpGet]
-//		public async Task<IEnumerable<GameDetailDTO>> GetGames()
-//		{
-//			var games = _service.GetAllGameDetail();
-//			return games;
-//		}
+		// GET: api/Games
+		[HttpGet]
+		public IEnumerable<GameDetailDTO> GetGames()
+		{
+			var games = _service.GetAllGameDetail();
+			return games;
+		}
 
-//		// GET: api/Games/5
-//		[HttpGet("{id}")]
-//		public async Task<GameDetailDTO> GetGame(int id)
-//		{
-//			var game = _service.GetGameDetailByGameId(id);
-//			return game;
-//		}
+		[HttpPost("popular")]
+		public async Task<IEnumerable<GameDetailDTO>> GetPopularGames(int begin, int end)
+		{
+			var gameIds = await _context.Collections
+					 .GroupBy(x => x.GameId) 
+					 .OrderByDescending(g => g.Count()) 
+					 .Select(g => g.Key) 
+					 .Skip(begin)
+					 .Take(end)
+					 .ToListAsync();
 
-//		// GET: api/Games/developer/5
-//		[HttpGet("developer/{developerId}")]
-//		public async Task<IEnumerable<GameDetailDTO>> GetGamesByDeveloperId(int developerId)
-//		{
-//			var games = _service.GetGameDetailByDeveloperId(developerId);
-//			return games;
-//		}
+			var gameDTOs = new List<GameDetailDTO>();
+			foreach (var id in gameIds)
+			{
+				var game = _service.GetGameDetailByGameId(id);
+				gameDTOs.Add(game);
+			}
 
-//		// POST: api/Games/FilterByTags
-//		//public async Task<IEnumerable<GameDetailDTO>> FilterGamesByTags([FromBody] List<int> tagIds)
-//		[HttpPost("FilterByTags")]
-//		public async Task<IEnumerable<GameDetailDTO>> FilterGamesByTags(List<int> tagIds)
-//		{
-//			var games = _service.GetGameDetailByTags(tagIds);
-//			return games;
-//		}
+			return gameDTOs;
+		}
 
-//		// GET: api/Games/developer/5
-//		[HttpGet("discount/{discountId}")]
-//		public async Task<IEnumerable<GameDetailDTO>> GetGamesByDiscount(int dlcId)
-//		{
-//			var games = _service.GetDiscountedGames(dlcId);
-//			return games;
-//		}
+		[HttpPost("Commend")]
+		public async Task<IEnumerable<int>> GetCommendGames(int memberId)
+		{
+			var gameIds = await _context.Collections
+					 .Where(x=> x.MemberId == memberId)
+					 .Select(x => x.GameId)
+					 .ToListAsync();
 
-//		[HttpGet("dlc/{dlcId}")]
-//		public async Task<GameDetailDTO> GetMainGame(int dlcId)
-//		{
+			var tagList = new List<int>();
+			foreach (var id in gameIds)
+			{
+				var tags = await _context.GameTags
+					 .Where(x => x.GameId == id)
+					 .Select(g => g.TagId)
+					 .ToListAsync();
+				tagList.AddRange(tags);
+			}
 
-//			var games = _service.GetMainGame(dlcId);
-//			return games;
-//		}
+			var sortedTag = tagList
+			.GroupBy(x => x)
+			.OrderByDescending(g => g.Count())
+			.Select(g => g.Key)
+			.ToList();
 
-//		[HttpGet("developerName/{developerId}")]
-//		public string GetDeveloperName(int developerId)
-//		{
-//			return _context.Developers.AsNoTracking()
-//				.Where(x => x.Id == developerId)
-//				.Select(x => x.Name)
-//				.FirstOrDefault();
-//		}
+			var max = 6;
+			var i = 0;
+			var notEnughtNum = 6;
+			var commendGameList = new List<int>();
 
-//		[HttpGet("tag/{tagId}")]
-//		public string GetTagName(int tagId)
-//		{
-//			var tag = _context.Tags.AsNoTracking()
-//				.Where(x => x.Id == tagId)
-//				.Select(x => x.Name)
-//				.FirstOrDefault();
+			while (commendGameList.Count < max)
+			{
+				notEnughtNum = max - commendGameList.Count();
 
-//			return tag;
-//		}
+				var commendGame = _context.GameTags.AsNoTracking()
+				.Where(x => x.TagId == sortedTag[i])
+				.Select(x => x.GameId)
+				.ToList();
 
-//		[HttpPost("AddToWishList")]
-//		public Task<string> AddToWishList(WishListe wishListe)
-//		{
-//			try
-//			{
-//			_context.WishListes.Add(wishListe);
-//			_context.SaveChanges();
-//			return Task.FromResult("Success");
+				var filteredCommendGame = commendGame.Except(gameIds).Except(commendGameList).ToList();
 
-//			}catch(Exception e)
-//			{
-//				return Task.FromResult(e.Message);
-//			}
-//		}
-//	}
-//}
+				commendGameList.AddRange(filteredCommendGame.Take(notEnughtNum));
+
+				i++;
+			}
+		
+			return commendGameList;
+
+		}
+
+		// GET: api/Games/5
+		[HttpGet("{id}")]
+		public GameDetailDTO GetGame(int id)
+		{
+			var game = _service.GetGameDetailByGameId(id);
+			return game;
+		}
+
+		// GET: api/Games/developer/5
+		[HttpGet("developer/{developerId}")]
+		public IEnumerable<GameDetailDTO> GetGamesByDeveloperId(int developerId)
+		{
+			var games = _service.GetGameDetailByDeveloperId(developerId);
+			return games;
+		}
+
+		// POST: api/Games/FilterByTags
+		//public async Task<IEnumerable<GameDetailDTO>> FilterGamesByTags([FromBody] List<int> tagIds)
+		[HttpPost("FilterByTags")]
+		public IEnumerable<GameDetailDTO> FilterGamesByTags(List<int> tagIds)
+		{
+			var games = _service.GetGameDetailByTags(tagIds);
+			return games;
+		}
+
+		// GET: api/Games/developer/5
+		[HttpGet("discount/{discountId}")]
+		public IEnumerable<GameDetailDTO> GetGamesByDiscount(int discountId)
+		{
+			var games = _service.GetDiscountedGames(discountId);
+			return games;
+		}
+
+		[HttpGet("dlc/{dlcId}")]
+		public GameDetailDTO GetMainGame(int dlcId)
+		{
+
+			var games = _service.GetMainGame(dlcId);
+			return games;
+		}
+
+		[HttpGet("developerName/{developerId}")]
+		public string GetDeveloperName(int developerId)
+		{
+			return _context.Developers.AsNoTracking()
+				.Where(x => x.Id == developerId)
+				.Select(x => x.Name)
+				.FirstOrDefault();
+		}
+
+		[HttpGet("tag/{tagId}")]
+		public string GetTagName(int tagId)
+		{
+			var tag = _context.Tags.AsNoTracking()
+				.Where(x => x.Id == tagId)
+				.Select(x => x.Name)
+				.FirstOrDefault();
+
+			return tag;
+		}
+
+		[HttpPost("AddToWishList")]
+		public async Task AddToWishList(WishListe wishListe)
+		{
+			
+				_context.WishListes.Add(wishListe);
+				_context.SaveChanges();
+				
+		}
+
+		public class gameData
+		{
+            public int gameId { get; set; }
+            public int memberId { get; set; }
+        }
+
+		[HttpPost("IsHaveGame")]
+		public bool IsHaveGame(gameData _gameData)
+        {
+			return _context.Orders.AsNoTracking().Where(x=> x.MemberId == _gameData.memberId && x.GameId == _gameData.gameId).Any();
+		}
+
+
+
+    }
+}
