@@ -222,7 +222,7 @@ namespace RGB.Back.Controllers
 			}
 			else
 			{
-				member.ConfirmCode = null; // 清空 confirm code 欄位
+				member.ConfirmCode = null; // 清空 confirm code 欄位				
 				//_context.SaveChanges();
 			};
 
