@@ -25,7 +25,7 @@ namespace RGB.Back.Controllers
         [HttpGet("GetUserFriends", Name = "GetUserFriends")]
         public async Task<List<UserInfoDto>> GetUserFriends(int id)
         {
-            var friends =  _service.GetAllFriends(id);
+            var friends = _service.GetAllFriends(id);
             var onlineUsers = ChatHub.OnlineUsers;
             foreach (var friend in friends)
             {
@@ -36,6 +36,21 @@ namespace RGB.Back.Controllers
                 }
             }
             return friends;
+        }
+
+        [HttpGet("IsUserFriend", Name = "IsUserFriend")]
+        public async Task<int> IsUserFriend(int memberId, int friendId)
+        {
+            var isFriend = await _service.IsFriend(memberId, friendId);
+            return isFriend;
+        }
+
+        [HttpGet("GetMemberId", Name = "GetMemberId")]
+        public async Task<int> GetMemberId(string userName)
+        {
+            var id = await _service.GetFriendId(userName);
+            return id;
+
         }
 
         [HttpGet("SendMessageTo", Name = "SendMessageTo")]
@@ -52,11 +67,11 @@ namespace RGB.Back.Controllers
         }
 
         [HttpPost("AddFriendRequest", Name = "AddFriendRequest")]
-        public async Task<IActionResult>  AddFriendRequest(int memberId, int friendId)
+        public async Task<IActionResult> AddFriendRequest(int memberId, int friendId)
         {
-           
-            await _service.AddFriend(memberId, friendId);   
-            
+
+            await _service.AddFriend(memberId, friendId);
+
             return Ok("已發送好友邀請");
         }
 
@@ -67,12 +82,21 @@ namespace RGB.Back.Controllers
             return requests;
         }
 
-        [HttpPut("{id}/accept")]
+        [HttpPut("Accept")]
         public async Task<IActionResult> AcceptFriendRequest(int senderId, int receiveId)
         {
             await _service.AcceptFriendRequest(senderId, receiveId);
             return Ok("已接受好友邀請");
         }
+
+        [HttpPut("Reject")]
+        public async Task<IActionResult> RejectFriendRequest(int senderId, int receiveId)
+        {
+            await _service.RejectFriendRequest(senderId, receiveId);
+            return Ok("已拒絕好友邀請");
+        }
+
+
 
 
     }
