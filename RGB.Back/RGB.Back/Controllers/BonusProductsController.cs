@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using RGB.Back.DTOs;
 using RGB.Back.Models;
@@ -59,11 +60,11 @@ namespace RGB.Back.Controllers
         // GET: api/BonusProducts/MemberId/5
         // GetByMember 變更會員蒐藏庫使用狀態
         [HttpPost("update")]
-        public async Task<IActionResult> UpdateMemberBonusItemAsync(int memberId, int bonusId, bool usingStatus)
+        public async Task<IActionResult> UpdateMemberBonusItemAsync(int memberId, int bonusId, int typeid, bool usingStatus)
         {
             try
             {
-                await _service.UpdateMemberBonusItemAsync(memberId, bonusId, usingStatus);
+                await _service.UpdateMemberBonusItemAsync(memberId, bonusId, typeid, usingStatus);
                 return Ok("BonusItem updated successfully.");
             }
             catch (Exception ex)

@@ -67,26 +67,30 @@ namespace RGB.Back.Service
         }
 
         // Update MemberBonusItem Using
-        public async Task UpdateMemberBonusItemAsync(int memberId, int bonusId, bool usingStatus)
+        public async Task UpdateMemberBonusItemAsync(int memberId, int bonusId, int typeid, bool usingStatus)
         {
             //遍歷所有相同 MemberId 的相同 BonusItem
             var bonusItems = await _context.BonusItems
+                .Include(x => x.Bonus)
                 .Where(x => x.MemberId == memberId)
                 .ToListAsync();
             foreach (var item in bonusItems)
             {
-                //將與目標不同的 BonusItem 的 Using 屬性設為 false
-                if (item.BonusId != bonusId)
+                if (item.Bonus.ProductTypeId == typeid)
                 {
-                    item.Using = false;
+                    //將與目標不同的 BonusItem 的 Using 屬性設為 false
+                    if (item.BonusId != bonusId)
+                    {
+                        item.Using = false;
+                    }
+                    else
+                    {
+                        item.Using = usingStatus;
+                    }
                 }
-                else
-                {
-                    item.Using = usingStatus;
-                }
+                // 保存變更
+                _context.SaveChanges();
             }
-            // 保存變更
-            await _context.SaveChangesAsync();
         }
 
         // Get Bonus Product Type
