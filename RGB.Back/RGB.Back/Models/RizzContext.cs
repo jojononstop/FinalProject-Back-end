@@ -366,8 +366,6 @@ public partial class RizzContext : DbContext
         {
             entity.ToTable("FriendRequest");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
-
             entity.HasOne(d => d.Receive).WithMany(p => p.FriendRequestReceives)
                 .HasForeignKey(d => d.ReceiveId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -437,7 +435,16 @@ public partial class RizzContext : DbContext
                 .HasMaxLength(200)
                 .HasColumnName("AvatarURL");
             entity.Property(e => e.BanTime).HasColumnType("datetime");
+            entity.Property(e => e.BonusAvatarUrl)
+                .HasMaxLength(200)
+                .HasColumnName("BonusAvatarURL");
+            entity.Property(e => e.BonusFrameUrl)
+                .HasMaxLength(200)
+                .HasColumnName("BonusFrameURL");
             entity.Property(e => e.ConfirmCode).HasMaxLength(256);
+            entity.Property(e => e.FrameUrl)
+                .HasMaxLength(200)
+                .HasColumnName("FrameURL");
             entity.Property(e => e.Google).HasMaxLength(256);
             entity.Property(e => e.LastLoginDate).HasColumnType("datetime");
             entity.Property(e => e.Mail)
