@@ -33,7 +33,28 @@ namespace RGB.Back.Controllers
 			return games;
 		}
 
-		[HttpPost("popular")]
+        [HttpGet("new")]
+        public async Task<IEnumerable<GameDetailDTO>> GetNewGames()
+        {
+			var currentDate = DateOnly.FromDateTime(DateTime.UtcNow);
+            var gameIds = await _context.Games
+					 .Where(g => g.ReleaseDate <= currentDate)
+                     .OrderByDescending(g => g.ReleaseDate)
+                     .Select(g => g.Id)
+                     .Take(6)
+                     .ToListAsync();
+
+            var gameDTOs = new List<GameDetailDTO>();
+            foreach (var id in gameIds)
+            {
+                var game = _service.GetGameDetailByGameId(id);
+                gameDTOs.Add(game);
+            }
+
+            return gameDTOs;
+        }
+
+        [HttpPost("popular")]
 		public async Task<IEnumerable<GameDetailDTO>> GetPopularGames(int begin, int end)
 		{
 			var gameIds = await _context.Collections
@@ -136,7 +157,21 @@ namespace RGB.Back.Controllers
 			return games;
 		}
 
-		[HttpGet("dlc/{dlcId}")]
+        [HttpGet("alldiscount")]
+        public IEnumerable<GameDetailDTO> GetAllDiscountGames()
+        {
+			var currentDate = new DateOnly();
+			var discountList = _context.Discounts.Where(x => x.StartDate <= currentDate && x.EndDate >= currentDate);
+			var gameList = new List<GameDetailDTO>();
+			foreach (var discount in discountList)
+			{
+				gameList.AddRange(_service.GetDiscountedGames(discount.Id));
+                
+			}
+            return gameList;
+        }
+
+        [HttpGet("dlc/{dlcId}")]
 		public GameDetailDTO GetMainGame(int dlcId)
 		{
 
@@ -167,9 +202,12 @@ namespace RGB.Back.Controllers
 		[HttpPost("AddToWishList")]
 		public async Task AddToWishList(WishListe wishListe)
 		{
-			
-				_context.WishListes.Add(wishListe);
+			var boolIsHave = _context.WishListes.Any(x => x.MemberId == wishListe.MemberId && x.GameId == wishListe.GameId);
+			if(!boolIsHave)
+			{
+			_context.WishListes.Add(wishListe);
 				_context.SaveChanges();
+			}	
 				
 		}
 
@@ -185,7 +223,25 @@ namespace RGB.Back.Controllers
 			return _context.Orders.AsNoTracking().Where(x=> x.MemberId == _gameData.memberId && x.GameId == _gameData.gameId).Any();
 		}
 
+		[HttpGet("GetWishList")]
+		public List<GameDetailDTO> GetWishList(int memberId) 
+		{
+			var gameIdList = _context.WishListes.Where(x=>x.MemberId == memberId).Select(x=> x.GameId).ToList();
 
+			var gameList = new List<GameDetailDTO>();
+			foreach (var gameId in gameIdList) 
+			{
+				gameList.Add(_service.GetGameDetailByGameId(gameId));
+            }
+			return gameList;
+		}
 
+		[HttpDelete("DeleteWishList")]
+		public void DeleteWishList(int memberId, int gameId) 
+		{
+			var wishList = _context.WishListes.AsNoTracking().Where(x => x.MemberId == memberId && x.GameId == gameId).FirstOrDefault();
+            _context.WishListes.Remove(wishList);
+            _context.SaveChanges();
+        }
     }
 }
