@@ -13,7 +13,7 @@ public partial class CartItem
 
     public int GameId { get; set; }
 
-    public virtual Game IdNavigation { get; set; }
+    public virtual Game Game { get; set; }
 
     public virtual Member Member { get; set; }
 }

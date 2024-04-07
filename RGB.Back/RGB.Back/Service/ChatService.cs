@@ -84,6 +84,18 @@ namespace RGB.Back.Service
 
 			return message;
 		}
+		internal async Task<int> GetFriendId(string? name)
+		{
+			var Friendname = await _context.Members.FirstOrDefaultAsync(m => m.NickName == name);
+
+			
+			if (Friendname == null)
+			{
+                throw new Exception("查無此人");
+            }
+
+			return Friendname.Id;
+		}
 
 		internal async Task AddFriend(int senderId, int receiveId)
 		{
@@ -95,14 +107,18 @@ namespace RGB.Back.Service
 			var existingRequset = await _context.FriendRequests.FirstOrDefaultAsync(r => r.SenderId == senderId && r.ReceiveId == receiveId);
 			if (existingRequset != null)
 			{
-				throw new Exception("已经发送过好友请求");
+				throw new Exception("已经發送過好友请求");
 			}
 
-			var request = new FriendRequest
+			var existingFriend = await _context.Friends.FirstOrDefaultAsync(f => (f.Member1Id == senderId && f.Member2Id == receiveId) || (f.Member1Id == receiveId && f.Member2Id == senderId));
+			if (existingFriend != null)
 			{
-				SenderId = senderId,
-				ReceiveId = receiveId,
-			};
+                throw new Exception("已经是好友");
+            }
+
+			var request = new FriendRequest();
+			request.SenderId = senderId;
+			request.ReceiveId = receiveId;
 
 			_context.FriendRequests.Add(request);
 			await _context.SaveChangesAsync();
@@ -117,6 +133,7 @@ namespace RGB.Back.Service
 															   {
 																   Id = r.Id,
 																   SenderId = r.SenderId,
+																   ReceiveId = r.ReceiveId,
 																   SenderName = m.NickName,
 																   SenderAvatarUrl = m.AvatarUrl
 															   }).ToListAsync();
@@ -140,6 +157,7 @@ namespace RGB.Back.Service
 			{
 				Member1Id = senderId,
 				Member2Id = receiveId,
+				Relationship = "1",
 
 			};
 
@@ -147,8 +165,9 @@ namespace RGB.Back.Service
 			{
 				Member1Id = receiveId,
 				Member2Id = senderId,
+                Relationship = "1",
 
-			};
+            };
 
 			_context.Friends.Add(friend);
 			_context.Friends.Add(friend2);
@@ -167,6 +186,14 @@ namespace RGB.Back.Service
 			await _context.SaveChangesAsync();
 		}
 
-
-	}
+        internal async Task<int> IsFriend(int memberId, int friendId)
+        {
+            var friend = await _context.Friends.FirstOrDefaultAsync(f => (f.Member1Id == memberId && f.Member2Id == friendId) || (f.Member1Id == friendId && f.Member2Id == memberId));
+			if (friend == null)
+			{
+                return 0;
+            }
+			return 1;
+        }
+    }
 }

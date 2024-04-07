@@ -17,6 +17,8 @@ public partial class Member
 
     public string AvatarUrl { get; set; }
 
+    public string FrameUrl { get; set; }
+
     public DateTime RegistrationDate { get; set; }
 
     public DateTime? BanTime { get; set; }

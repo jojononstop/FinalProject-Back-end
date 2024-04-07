@@ -38,6 +38,21 @@ namespace RGB.Back.Controllers
             return friends;
         }
 
+        [HttpGet("IsUserFriend", Name = "IsUserFriend")]
+        public async Task<int> IsUserFriend(int memberId, int friendId)
+        {
+            var isFriend = await _service.IsFriend(memberId, friendId);
+            return isFriend;
+        }
+
+        [HttpGet("GetMemberId", Name = "GetMemberId")]
+        public async Task<int> GetMemberId(string userName)
+        {
+            var id = await _service.GetFriendId(userName);
+            return id;
+
+        }
+
         [HttpGet("SendMessageTo", Name = "SendMessageTo")]
         public async Task<IActionResult> SendMessageTo(string connectionId, string data, [FromServices] IHubContext<ChatHub, IChatClient> hubContext)
         {
@@ -67,12 +82,21 @@ namespace RGB.Back.Controllers
             return requests;
         }
 
-        [HttpPut("{id}/accept")]
+        [HttpPut("Accept")]
         public async Task<IActionResult> AcceptFriendRequest(int senderId, int receiveId)
         {
             await _service.AcceptFriendRequest(senderId, receiveId);
             return Ok("已接受好友邀請");
         }
+
+        [HttpPut("Reject")]
+        public async Task<IActionResult> RejectFriendRequest(int senderId, int receiveId)
+        {
+            await _service.RejectFriendRequest(senderId, receiveId);
+            return Ok("已拒絕好友邀請");
+        }
+
+        
 
 
     }

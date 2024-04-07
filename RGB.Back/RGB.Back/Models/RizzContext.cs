@@ -207,10 +207,8 @@ public partial class RizzContext : DbContext
 
         modelBuilder.Entity<CartItem>(entity =>
         {
-            entity.Property(e => e.Id).ValueGeneratedOnAdd();
-
-            entity.HasOne(d => d.IdNavigation).WithOne(p => p.CartItem)
-                .HasForeignKey<CartItem>(d => d.Id)
+            entity.HasOne(d => d.Game).WithMany(p => p.CartItems)
+                .HasForeignKey(d => d.GameId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_CartItems_Games");
 
@@ -350,7 +348,6 @@ public partial class RizzContext : DbContext
         modelBuilder.Entity<Friend>(entity =>
         {
             entity.Property(e => e.Relationship)
-                .IsRequired()
                 .HasMaxLength(10)
                 .IsFixedLength();
 
@@ -368,8 +365,6 @@ public partial class RizzContext : DbContext
         modelBuilder.Entity<FriendRequest>(entity =>
         {
             entity.ToTable("FriendRequest");
-
-            entity.Property(e => e.Id).ValueGeneratedNever();
 
             entity.HasOne(d => d.Receive).WithMany(p => p.FriendRequestReceives)
                 .HasForeignKey(d => d.ReceiveId)
@@ -441,6 +436,9 @@ public partial class RizzContext : DbContext
                 .HasColumnName("AvatarURL");
             entity.Property(e => e.BanTime).HasColumnType("datetime");
             entity.Property(e => e.ConfirmCode).HasMaxLength(256);
+            entity.Property(e => e.FrameUrl)
+                .HasMaxLength(200)
+                .HasColumnName("FrameURL");
             entity.Property(e => e.Google).HasMaxLength(256);
             entity.Property(e => e.LastLoginDate).HasColumnType("datetime");
             entity.Property(e => e.Mail)
