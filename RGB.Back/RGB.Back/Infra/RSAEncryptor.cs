@@ -40,6 +40,7 @@ namespace RGB.Back.Infra
 
 				rsa = new RSACryptoServiceProvider();
 				rsa.ImportParameters(_privateKey);
+
 			}
 			else
 			{

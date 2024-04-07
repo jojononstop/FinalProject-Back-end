@@ -55,19 +55,6 @@ namespace RGB.Back.Service
 
         // Get BonusItem By Member
         // 依據會員 ID 查詢會員的 BonusItem
-        //public async Task<List<MemberBonusItemDto>> GetBonusProductByMemberAsync(int memberId)
-        //{
-        //    var bonusItem = await _context.BonusItems
-        //        .AsNoTracking()
-        //        .Include(db => db.Bonus)
-        //        .Include(db => db.Bonus.ProductType)
-        //        .Where(x => x.MemberId == memberId)
-        //        .ToListAsync();
-        //    return DBToBonusItemDto(bonusItem);
-        //}
-
-        // Get BonusItem By Member
-        // 依據會員 ID 查詢會員的 BonusItem
         public async Task<List<MemberBonusItemDto>> GetBonusProductByMemberAsync(int memberId)
         {
             var bonusItem = await _context.BonusItems
@@ -159,7 +146,7 @@ namespace RGB.Back.Service
         }
 
         // Add Product To BonusItem
-        // 新增商品到資料庫
+        // 購買 新增商品到資料庫
         public async Task<bool> ProductToBonusItemAsync(int memberId, int productId)
         {
             try
@@ -171,6 +158,10 @@ namespace RGB.Back.Service
                 };
 
                 _context.BonusItems.Add(bonusItem);
+
+                var bonusProduct = _context.BonusProducts.Find(productId);
+                var member = _context.Members.Find(memberId);
+                member.Bonus -= bonusProduct.Price;
                 await _context.SaveChangesAsync();
 
                 return true;
@@ -180,6 +171,7 @@ namespace RGB.Back.Service
                 return false;
             }
         }
+
 
         // DB to BonusDTO by BonusProduct
         private List<BonusDto> DBToBonusDto(List<BonusProduct> bonusProduct)
