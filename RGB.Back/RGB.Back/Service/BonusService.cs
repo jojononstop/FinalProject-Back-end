@@ -82,15 +82,12 @@ namespace RGB.Back.Service
                     if (item.BonusId != bonusId)
                     {
                         item.Using = false;
-
                     }
                     else
                     {
                         item.Using = usingStatus;
-
                     }
                 }
-                
                 // 保存變更
                 _context.SaveChanges();
             }
