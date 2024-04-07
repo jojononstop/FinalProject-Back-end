@@ -10,6 +10,5 @@
 
 		public int? MemberTagId { get; set; }
 
-		public DateTime DateOfPurchase { get; set; }
 	}
 }

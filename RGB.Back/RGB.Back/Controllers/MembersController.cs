@@ -30,6 +30,7 @@ namespace RGB.Back.Controllers
 		private readonly MemberService _service;
 		private readonly IDataProtector _dataProtector;
 		private readonly JwtConfig _jwtConfig;
+		private readonly JWTservice _jwtservice;
 
 
 		public MembersController(IOptionsMonitor<JwtConfig> optionsMonitor,RizzContext context)
@@ -37,7 +38,7 @@ namespace RGB.Back.Controllers
 			_context = context;
 			_service = new MemberService(context);
 			_jwtConfig = optionsMonitor.CurrentValue;
-
+			_jwtservice = new JWTservice();
 
 			// 创建服务集合
 			var serviceCollection = new ServiceCollection();
@@ -223,7 +224,7 @@ namespace RGB.Back.Controllers
 			else
 			{
 				member.ConfirmCode = null; // 清空 confirm code 欄位
-				//_context.SaveChanges();
+				_context.SaveChanges();
 			};
 
 			
