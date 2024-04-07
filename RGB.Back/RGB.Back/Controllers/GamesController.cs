@@ -160,7 +160,7 @@ namespace RGB.Back.Controllers
         [HttpGet("alldiscount")]
         public IEnumerable<GameDetailDTO> GetAllDiscountGames()
         {
-			var currentDate = new DateOnly();
+			var currentDate = DateOnly.FromDateTime(DateTime.UtcNow);
 			var discountList = _context.Discounts.Where(x => x.StartDate <= currentDate && x.EndDate >= currentDate);
 			var gameList = new List<GameDetailDTO>();
 			foreach (var discount in discountList)
