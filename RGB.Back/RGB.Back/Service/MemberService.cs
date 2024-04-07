@@ -109,7 +109,7 @@ namespace RGB.Back.Service
 				if (member.AvatarUrl==null)
 				{
 					//預設頭像
-					Avatar = "";
+					Avatar = "https://bootdey.com/img/Content/avatar/avatar2.png";
 				}
 				else
 				{
@@ -156,7 +156,7 @@ namespace RGB.Back.Service
 				Password = encryptedpassword,
 				Mail = cmDto.Email,
 				//預設頭像
-				AvatarUrl = null,
+				AvatarUrl = "https://bootdey.com/img/Content/avatar/avatar2.png",
 				RegistrationDate = DateTime.Now,
 				BanTime = null,
 				Bonus = 0,

@@ -14,13 +14,13 @@ namespace RGB.Back.Service
 		}
 
 
-		// 取全部
-		public List<Order> GetAll()
-		{
-			var orders = _context.Orders.AsNoTracking().ToList();
+		//// 取全部
+		//public List<Order> GetAll()
+		//{
+		//	var orders = _context.Orders.AsNoTracking().ToList();
 
-			return orders;
-		}
+		//	return orders;
+		//}
 
 
 
@@ -65,15 +65,15 @@ namespace RGB.Back.Service
 
 
 
-		//取得一筆
-		public List<Order> GetOrdersByMemberId(int memberId)
-		{// 從資料庫中取得指定會員ID的訂單資訊
-			var orders = _context.Orders
-				                 .Include(o => o.Game)
-								 .Include(o => o.Member)
-								 .Where(o => o.MemberId == memberId)
-								 .Select(o => new Order
-								 {
+        //取得一筆
+        public List<Order> GetOrdersByMemberId(int memberId)
+        {// 從資料庫中取得指定會員ID的訂單資訊
+            var orders = _context.Orders
+                                 .Include(o => o.Game)
+                                 .Include(o => o.Member)
+                                 .Where(o => o.MemberId == memberId)
+                                 .Select(o => new Order
+                                 {
                                      Id = o.Id,
                                      MemberId = o.MemberId,
                                      GameId = o.GameId,
@@ -81,12 +81,12 @@ namespace RGB.Back.Service
                                      Member = _context.Members.FirstOrDefault(m => m.Id == o.MemberId),
                                      Game = _context.Games.FirstOrDefault(g => g.Id == o.GameId)
                                  })
-								 .ToList();
+                                 .ToList();
 
-			return orders;
-		}
+            return orders;
+        }
 
-		internal Task<bool> UserExistsAsync(int memberId)
+        internal Task<bool> UserExistsAsync(int memberId)
 		{
 			throw new NotImplementedException();
 		}
