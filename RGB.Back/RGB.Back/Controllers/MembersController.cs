@@ -38,7 +38,7 @@ namespace RGB.Back.Controllers
 			_context = context;
 			_service = new MemberService(context);
 			_jwtConfig = optionsMonitor.CurrentValue;
-			_jwtservice = new JWTservice();
+			_jwtservice = new JWTservice("private_key.xml", "public_key.xml");
 
 			// 创建服务集合
 			var serviceCollection = new ServiceCollection();
@@ -90,6 +90,11 @@ namespace RGB.Back.Controllers
 			}
 			else
 			{
+				Claim idclaim = new Claim("memberid", memberId);
+				Claim nameclaim = new Claim("membername", name);
+				//jwt
+				string jwt = _jwtservice.GenerateJWT(idclaim,nameclaim);
+				//
 				string sussceMessage = "登入成功";
 				List<string> sussce = new List<string>();
 				var protectId = _dataProtector.Protect(memberId);
@@ -99,10 +104,23 @@ namespace RGB.Back.Controllers
 				sussce.Add(bouns);
 				sussce.Add(name);
 				sussce.Add(memberId);
+				//jwt
+				sussce.Add(jwt);
+				//
 				//ProcessLogin(memberId);
 				return sussce;
 			}
 		}
+
+		[HttpPost("unjwt")]
+		public string unjwt(string jwtToken)
+		{
+			var claims = _jwtservice.DecodeAndSerializeClaims(jwtToken);
+			return claims;
+		}
+
+
+
 
 		[HttpPost("MemberId")]
 		public async Task<string> MemberId(string protectId)
