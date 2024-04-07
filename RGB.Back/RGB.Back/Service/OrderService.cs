@@ -39,7 +39,7 @@ namespace RGB.Back.Service
 					{
 						MemberId = memberId,
 						GameId = gameId,
-						OrderDate = DateOnly.FromDateTime(DateTime.Now),
+						OrderDate = DateOnly.FromDateTime(DateTime.Now)
 					};
 
 					// 添加到資料庫
@@ -69,7 +69,18 @@ namespace RGB.Back.Service
 		public List<Order> GetOrdersByMemberId(int memberId)
 		{// 從資料庫中取得指定會員ID的訂單資訊
 			var orders = _context.Orders
+				                 .Include(o => o.Game)
+								 .Include(o => o.Member)
 								 .Where(o => o.MemberId == memberId)
+								 .Select(o => new Order
+								 {
+                                     Id = o.Id,
+                                     MemberId = o.MemberId,
+                                     GameId = o.GameId,
+                                     OrderDate = o.OrderDate,
+                                     Member = _context.Members.FirstOrDefault(m => m.Id == o.MemberId),
+                                     Game = _context.Games.FirstOrDefault(g => g.Id == o.GameId)
+                                 })
 								 .ToList();
 
 			return orders;
