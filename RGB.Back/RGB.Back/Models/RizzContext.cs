@@ -207,10 +207,8 @@ public partial class RizzContext : DbContext
 
         modelBuilder.Entity<CartItem>(entity =>
         {
-            entity.Property(e => e.Id).ValueGeneratedOnAdd();
-
-            entity.HasOne(d => d.IdNavigation).WithOne(p => p.CartItem)
-                .HasForeignKey<CartItem>(d => d.Id)
+            entity.HasOne(d => d.Game).WithMany(p => p.CartItems)
+                .HasForeignKey(d => d.GameId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_CartItems_Games");
 
@@ -350,7 +348,6 @@ public partial class RizzContext : DbContext
         modelBuilder.Entity<Friend>(entity =>
         {
             entity.Property(e => e.Relationship)
-                .IsRequired()
                 .HasMaxLength(10)
                 .IsFixedLength();
 
