@@ -76,7 +76,7 @@ namespace RGB.Back.Controllers
 		}
 
 		[HttpPost("Commend")]
-		public async Task<IEnumerable<int>> GetCommendGames(int memberId)
+		public async Task<IEnumerable<GameDetailDTO>> GetCommendGames(int memberId)
 		{
 			var gameIds = await _context.Collections
 					 .Where(x=> x.MemberId == memberId)
@@ -119,8 +119,14 @@ namespace RGB.Back.Controllers
 
 				i++;
 			}
-		
-			return commendGameList;
+
+			var gameDTOs = new List<GameDetailDTO>();
+			foreach (var id in commendGameList)
+			{
+				gameDTOs.Add(_service.GetGameDetailByGameId(id));
+			}
+
+			return gameDTOs;
 
 		}
 
@@ -220,7 +226,7 @@ namespace RGB.Back.Controllers
 		[HttpPost("IsHaveGame")]
 		public bool IsHaveGame(gameData _gameData)
         {
-			return _context.Orders.AsNoTracking().Where(x=> x.MemberId == _gameData.memberId && x.GameId == _gameData.gameId).Any();
+			return _context.Collections.AsNoTracking().Where(x=> x.MemberId == _gameData.memberId && x.GameId == _gameData.gameId).Any();
 		}
 
 		[HttpGet("GetWishList")]

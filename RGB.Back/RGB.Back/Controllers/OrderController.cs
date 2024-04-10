@@ -44,5 +44,11 @@ namespace RGB.Back.Controllers
 			return Ok("訂單已成功建立");
 		}
 
+		[HttpGet("GetLastOrderId")]
+		public int GetLastOrderId()
+		{
+			return _context.Orders.OrderBy(x=>x.Id).Select(x => x.Id).LastOrDefault();
+		}
+
 	}
 }
