@@ -259,7 +259,21 @@ namespace RGB.Back.Controllers
 			return sussce;
 		}
 
+		//修改頭像
+		[HttpPut("ava{id}")]
+		public async Task<string> EditMemberAVA(string id, string ava)
+		{
+			var unprotectId = _dataProtector.Unprotect(id);
 
+			var member = _context.Members.Find(Convert.ToInt32(unprotectId));
+
+			member.AvatarUrl = ava;
+
+			_context.SaveChanges();
+
+			//         return "編輯成功";
+			return "編輯成功";
+		}
 
 		//修改
 		[HttpPut("{id}")]
