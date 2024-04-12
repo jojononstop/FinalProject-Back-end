@@ -34,8 +34,12 @@ namespace RGB.Back.Controllers
 		[HttpPost]
 		public async Task PostCartItem(CartItem cartItem)
 		{
+			var haveItem = _context.CartItems.Where(x=>x.GameId == cartItem.GameId && x.MemberId== cartItem.MemberId).FirstOrDefault();
+			if (haveItem == null)
+			{
 			_context.CartItems.Add(cartItem);
 			await _context.SaveChangesAsync();
+			}
 		}
 
 		// DELETE: api/CartItems/5

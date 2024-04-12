@@ -57,6 +57,7 @@ namespace RGB.Back.Controllers
         [HttpPost("popular")]
 		public async Task<IEnumerable<GameDetailDTO>> GetPopularGames(int begin, int end)
 		{
+			//var currentDate = DateOnly.FromDateTime(DateTime.UtcNow);
 			var gameIds = await _context.Collections
 					 .GroupBy(x => x.GameId) 
 					 .OrderByDescending(g => g.Count()) 
